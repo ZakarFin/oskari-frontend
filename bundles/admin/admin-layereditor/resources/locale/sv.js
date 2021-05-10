@@ -87,8 +87,8 @@ Oskari.registerLocalization(
             "themeName": "Teman namn",
             "addTheme": "Lägg till tema",
             "editTheme": "Redigera tema",
-            "addSubtheme": "Lägg subtema", // FIX!? Is this correct translation?
-            "editSubtheme": "Redigera subtema",  // FIX!? Is this correct translation?
+            "addSubtheme": "Lägg undertema",
+            "editSubtheme": "Redigera undertema",
             "selectMapLayerGroupsButton": "Välj grupp",
             "cancel": "Tillbaka",
             "close": "Stäng",
@@ -143,6 +143,7 @@ Oskari.registerLocalization(
                 }
             },
             "layerStatus": {
+                "unsupportedType": "Admin-funktionaliteten stöder inte denna lagertyp",
                 "existing": "Lagret är redan registrerat i tjänsten. Genom att välja det lägger du till samma lager flera gånger.",
                 "problematic": "Det förekom problem vid tolkningen av lagrets capabilities dokument. Lagret fungerar kanske inte normalt.",
                 "unsupported": "Lagret stöder inte de projektioner, som tjänsten använder. Lagret fungerar kanske inte normalt."
@@ -164,11 +165,12 @@ Oskari.registerLocalization(
                 "info": "Visning av små objekt har optimerats. Detta begränsar skalanivåerna på vilka objekten visas."
             },
             "timeSeries": {
-                "metadataLayer": "Metadata layer",
-                "metadataAttribute": "Timeline attribute",
+                "metadataLayer": "Metadatalager",
+                "metadataAttribute": "Metadata tidsattribut",
                 "metadataToggleLevel": "Zoomnivåer där vektorformaten är aktiverat",
-                "noToggle": "No toggle",
-                "ui": "Time series UI",
+                "metadataVisualize": "Metadatalager synlighet ",
+                "noToggle": "Inget val",
+                "ui": "Tidsserie användargränssnitt",
                 "player": "Animering",
                 "range": "Tidsserie",
                 "none": "Inget val",
@@ -218,6 +220,7 @@ Oskari.registerLocalization(
             "dynamicScreenSpaceErrorDensity": "Dynamic screen space error density",
             "dynamicScreenSpaceErrorFactor": "Dynamic screen space error factor",
             "dynamicScreenSpaceErrorHeightFalloff": "Dynamic screen space error height falloff",
+            "maximumScreenSpaceError": "Maximum screen space error",
             "deleteGroupLayers": "Radera kartlagren i gruppen",
             "hover": "Framhävning av objekt och tooltip (JSON)",
             "ion": {

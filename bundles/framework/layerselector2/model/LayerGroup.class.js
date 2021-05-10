@@ -87,7 +87,9 @@ export class LayerGroup {
         return this.layers;
     }
     setLayers (newLayers = []) {
-        this.layers = newLayers;
+        this.layers = [];
+        this.searchIndex = {};
+        newLayers.forEach(layer => this.addLayer(layer));
     }
     _getSearchIndex (layer) {
         var val = layer.getName() + ' ' +
@@ -103,6 +105,7 @@ export class LayerGroup {
     clone () {
         const clone = new LayerGroup(this.id, this.groupMethod, this.name);
         clone.layers = [...this.layers];
+        clone.groups = [...this.groups];
         clone.searchIndex = { ...this.searchIndex };
         clone.tools = [...this.tools];
         return clone;

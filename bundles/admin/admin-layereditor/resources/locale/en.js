@@ -144,6 +144,7 @@ Oskari.registerLocalization(
                 }
             },
             "layerStatus": {
+                "unsupportedType": "Admin functionality doesn't support the layer type",
                 "existing": "The map layer is already registered to this service. By selecting this you will be adding a duplicate layer.",
                 "problematic": "There were some issues parsing the capabilities for this layer. This layer might not work properly if added.",
                 "unsupported": "According to capabilities this layer doesn't support projections used on this service. This layer might not work properly if added."
@@ -168,6 +169,7 @@ Oskari.registerLocalization(
                 "metadataLayer": "Metadata layer",
                 "metadataAttribute": "Timeline attribute",
                 "metadataToggleLevel": "Zoom levels at which metadata layer will be active",
+                "metadataVisualize": "Metadata layer visibility",
                 "noToggle": "No toggle",
                 "ui": "Time series UI",
                 "player": "Player/animation",
@@ -219,6 +221,7 @@ Oskari.registerLocalization(
             "dynamicScreenSpaceErrorDensity": "Dynamic screen space error density",
             "dynamicScreenSpaceErrorFactor": "Dynamic screen space error factor",
             "dynamicScreenSpaceErrorHeightFalloff": "Dynamic screen space error height falloff",
+            "maximumScreenSpaceError": "Maximum screen space error",
             "deleteGroupLayers": "Delete the map layers in the group",
             "hover": "Feature highlighting and tooltip (JSON)",
             "ion": {

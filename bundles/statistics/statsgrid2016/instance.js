@@ -104,6 +104,13 @@ Oskari.clazz.define(
             }
             // setup initial state
             this.setState();
+
+            // listen for search closing to remove stats layer if no indicators was found
+            this.flyoutManager.on('hide', id => {
+                if (id === 'search' && !this.statsService.getStateService().hasIndicators()) {
+                    this._removeStatsLayer();
+                }
+            });
         },
         addMapPluginToggleTool: function (tool) {
             if (!this.togglePlugin || !tool) {
@@ -124,7 +131,7 @@ Oskari.clazz.define(
                     this[plugin].toggleUI();
                 }
             });
-            let visible = this[plugin] && !!this[plugin].getElement();
+            const visible = this[plugin] && !!this[plugin].getElement();
             this.togglePlugin.toggleTool(tool, visible);
         },
         _addIndicatorsTabToPersonalData: function (sandbox) {
@@ -322,8 +329,17 @@ Oskari.clazz.define(
                 }
             },
             'AfterMapLayerRemoveEvent': function (event) {
-                const eventBuilder = Oskari.eventBuilder('StatsGrid.StateChangedEvent');
-                this.getSandbox().notifyAll(eventBuilder(true));
+                if (event.getMapLayer().getId() !== this._layerId) {
+                    return;
+                }
+                if (!this.getTile().isAttached()) {
+                    // clear ui if statsgrid isn't active
+                    this.clearDataProviderInfo();
+                    this._setClassificationViewVisible(false);
+                    this._setSeriesControlVisible(false);
+                    this.flyoutManager.hideFlyouts();
+                }
+                this.statsService.notifyOskariEvent(event);
             },
             /**
              * @method MapLayerEvent
@@ -346,6 +362,19 @@ Oskari.clazz.define(
                 } else {
                     // ajax call for all layers
                     this.__setupLayerTools();
+                }
+            },
+            'AfterMapLayerAddEvent': function (event) {
+                // listen event only when statsgrid isn't active
+                if (event.getMapLayer().getId() !== this._layerId || this.getTile().isAttached()) {
+                    return;
+                }
+                if (!this.statsService.getStateService().hasIndicators()) {
+                    this.getSandbox().postRequestByName('userinterface.UpdateExtensionRequest', [this, 'attach']);
+                } else {
+                    // layer has added from layerlist and has indicators.
+                    // notify other components with state changed to get full render
+                    this.getSandbox().notifyAll(Oskari.eventBuilder('StatsGrid.StateChangedEvent')());
                 }
             },
             'MapLayerVisibilityChangedEvent': function (event) {
@@ -428,9 +457,16 @@ Oskari.clazz.define(
             this.getSandbox().postRequestByName('userinterface.UpdateExtensionRequest', [this, uimode]);
         },
         getState: function () {
-            const serviceState = this.statsService.getStateService().getState();
+            // State isn't cleared when stats layer is removed
+            // return full state only if stats layer is selected
+            if (this.sandbox.isLayerAlreadySelected(this._layerId)) {
+                const serviceState = this.statsService.getStateService().getState();
+                return {
+                    ...serviceState,
+                    view: this.visible
+                };
+            }
             return {
-                ...serviceState,
                 view: this.visible
             };
         },

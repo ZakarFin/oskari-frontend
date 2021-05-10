@@ -371,7 +371,6 @@ Oskari.clazz.define('Oskari.statistics.statsgrid.RegionsetViewer', function (ins
                 effect: 'darken'
             };
         }
-
         this.sb.postRequestByName(
             'VectorLayerRequest',
             [
@@ -461,10 +460,13 @@ Oskari.clazz.define('Oskari.statistics.statsgrid.RegionsetViewer', function (ins
         });
         me.service.on('StatsGrid.StateChangedEvent', function (event) {
             if (event.isReset()) {
-                me._clearRegions();
                 return;
             }
+            me._clearRegions();
             me.render(state.getRegion());
+        });
+        me.service.on('AfterMapLayerRemoveEvent', function () {
+            me._clearRegions();
         });
 
         me.service.on('FeatureEvent', function (event) {

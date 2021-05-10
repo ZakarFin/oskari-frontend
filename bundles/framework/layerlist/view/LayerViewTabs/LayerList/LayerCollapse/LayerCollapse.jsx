@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Collapse, Message } from 'oskari-ui';
 import { Controller, LocaleConsumer } from 'oskari-ui/util';
@@ -16,7 +16,7 @@ const StyledCollapse = styled(Collapse)`
     }
 `;
 
-const LayerCollapse = ({ groups, openGroupTitles, selectedLayerIds, controller }) => {
+const LayerCollapse = ({ groups, openGroupTitles, selectedLayerIds, opts, controller }) => {
 
     if (!Array.isArray(groups) || groups.length === 0) {
         return <Alert showIcon type='info' message={<Message messageKey='errors.noResults' />} />;
@@ -28,25 +28,14 @@ const LayerCollapse = ({ groups, openGroupTitles, selectedLayerIds, controller }
         >
             {
                 groups.map(group => {
-                    const layerIds = group.getLayers().map(lyr => lyr.getId());
-                    // layerNames are used in key so renaming will update the UI
-                    const layerNames = group.getLayers().map(lyr => lyr.getName());
-                    const selectedLayersInGroup = selectedLayerIds.filter(id => layerIds.includes(id));
-                    let active = false;
-                    // set group switch active if all layers in group are selected
-                    if (layerIds.length > 0 && selectedLayersInGroup.length == layerIds.length) {
-                        active = true;
-                    }
-                    // Passes only ids the component is interested in.
-                    // This way the content of selected layer ids remains unchanged when a layer in another group gets added on map.
-                    // When the properties remain unchanged, we can benefit from memoization.
                     return (
-                        <LayerCollapsePanel key={group.getId() + layerNames.join()}
+                        <LayerCollapsePanel key={group.getId()}
                             trimmed
-                            selectedLayerIds={selectedLayersInGroup}
+                            selectedLayerIds={selectedLayerIds}
                             group={group}
+                            openGroupTitles={openGroupTitles}
+                            opts={opts}
                             controller={controller}
-                            active={active}
                         />
                     );
                 })
@@ -60,6 +49,7 @@ LayerCollapse.propTypes = {
     openGroupTitles: PropTypes.array.isRequired,
     filtered: PropTypes.array,
     selectedLayerIds: PropTypes.array.isRequired,
+    opts: PropTypes.object,
     controller: PropTypes.instanceOf(Controller).isRequired
 };
 

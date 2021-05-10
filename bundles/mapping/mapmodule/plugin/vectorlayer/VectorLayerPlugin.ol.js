@@ -566,11 +566,28 @@ Oskari.clazz.define(
             if (options.showLayer) {
                 // Show layer in layer selector
                 if (!mapLayerService.findMapLayer(layer.getId())) {
+                    // check if we have a group for this layer in maplayer service
+                    const groupForLayer = layer.getGroups()[0];
+                    const mapLayerGroup = mapLayerService.getAllLayerGroups(groupForLayer.id);
+                    if (!mapLayerGroup) {
+                        const group = {
+                            id: groupForLayer.id,
+                            name: {
+                                [Oskari.getLang()]: groupForLayer.name
+                            }
+                        };
+                        mapLayerService.addLayerGroup(Oskari.clazz.create('Oskari.mapframework.domain.MaplayerGroup', group));
+                    }
+
                     mapLayerService.addLayer(layer);
                 }
                 if (options.showLayer !== 'registerOnly' && !this._sandbox.findMapLayerFromSelectedMapLayers(layer.getId())) {
                     var request = Oskari.requestBuilder('AddMapLayerRequest')(layer.getId());
                     this._sandbox.request(this, request);
+                } else if (options.showLayer === 'registerOnly') {
+                    // remove maplayer from map because _getOlLayer adds it to map and this is only for registering layer
+                    // FIXME: refactor _getOlLayer -> handle get, update and add separately
+                    this.removeMapLayerFromMap(layer);
                 }
             }
 

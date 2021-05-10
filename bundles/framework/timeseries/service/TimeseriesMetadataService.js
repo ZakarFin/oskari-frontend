@@ -12,14 +12,16 @@ const DEFAULT_STYLE = {
 };
 
 export class TimeseriesMetadataService {
-    constructor (layerId, attributeName, toggleLevel) {
+    constructor (layerId, attributeName, toggleLevel, visualize) {
         this._layerId = layerId;
         this._attributeName = attributeName;
+        this._visualize = visualize;
         if (typeof toggleLevel === 'number' && toggleLevel > -1) {
             this._toggleLevel = toggleLevel;
         } else {
             this._toggleLevel = -1;
         }
+        this._geojson = null;
     }
 
     getToggleLevel () {
@@ -32,7 +34,7 @@ export class TimeseriesMetadataService {
      * @param {Function} success called with updated years array based on the loaded features
      * @param {Function} error called if there's a problem loading the features
      */
-    setBbox (bbox = [], success, error) {
+    setBbox (bbox = {}, success, error) {
         const sandbox = Oskari.getSandbox();
         if (Object.keys(bbox).length !== 4) {
             this.clearPreviousFeatures();
@@ -94,16 +96,13 @@ export class TimeseriesMetadataService {
     }
 
     getCurrentFeatures (asGeoJson) {
-        if (!this._geojson) {
-            return asGeoJson ? null : [];
+        let geoJson = this._geojson;
+        if (!geoJson || !Array.isArray(geoJson.features)) {
+            geoJson = {
+                features: []
+            };
         }
-        if (asGeoJson) {
-            return { ...this._geojson };
-        }
-        if (!Array.isArray(this._geojson.features)) {
-            return [];
-        }
-        return this._geojson.features.slice(0);
+        return asGeoJson ? { ...geoJson } : [...geoJson.features];
     }
 
     clearPreviousFeatures () {
@@ -114,13 +113,17 @@ export class TimeseriesMetadataService {
     }
 
     showFeaturesForRange (startTime, endTime) {
+        if (!this._visualize) {
+            // configured by admin to not show the features on map
+            return;
+        }
         const sandbox = Oskari.getSandbox();
         this.clearPreviousFeatures();
         const log = Oskari.log('TimeSeries');
-        log.info('Toggle at: ' + this._toggleLevel, 'Current zoom is: ' + sandbox.getMap().getZoom());
+        log.debug('Toggle at: ' + this._toggleLevel, 'Current zoom is: ' + sandbox.getMap().getZoom());
         if (this._toggleLevel === -1 || this._toggleLevel >= sandbox.getMap().getZoom()) {
             // don't show features but the wms
-            log.info('Not showing features, WMS should be shown');
+            log.debug('Not showing features, WMS should be shown');
             return;
         }
         const attribute = this._attributeName;
@@ -129,7 +132,7 @@ export class TimeseriesMetadataService {
             const time = moment(feature.properties[attribute]);
             return startTime < time && time < endTime;
         });
-        log.info('Features count for time range: ' + features.length + '/' + geojson.features.length);
+        log.debug('Features count for time range: ' + features.length + '/' + geojson.features.length);
         geojson.features = features;
 
         // TODO: push to map with addfeaturestomap/ styling/optimizing
