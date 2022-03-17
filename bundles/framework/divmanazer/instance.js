@@ -232,28 +232,15 @@ Oskari.clazz.define('Oskari.userinterface.bundle.ui.UserInterfaceBundleInstance'
          * AddExtensionRequest
          */
         addExtension: function (extension) {
-            var me = this,
-                plugins,
-                extensions,
-                extensionsByName,
-                extensionInfo,
-                count,
-                name,
-                flyoutPlugin,
-                el,
-                tilePlugin,
-                tile,
-                viewPlugin,
-                view;
+            const me = this;
+            const extensions = this.extensions;
+            const extensionsByName = this.extensionsByName;
+            const count = extensions.length;
 
             extension.startExtension();
+            const plugins = extension.getPlugins();
 
-            plugins = extension.getPlugins();
-
-            extensions = me.extensions;
-            extensionsByName = me.extensionsByName;
-
-            extensionInfo = {
+            const extensionInfo = {
                 state: 'close',
                 extension: extension,
                 draggable: null,
@@ -266,10 +253,9 @@ Oskari.clazz.define('Oskari.userinterface.bundle.ui.UserInterfaceBundleInstance'
 
             extensionInfo.extensionUpdatedEvent = Oskari.eventBuilder('userinterface.ExtensionUpdatedEvent')(extension, extensionInfo.state);
 
-            count = extensions.length;
-            name = extension.getName();
+            const name = extension.getName();
 
-            flyoutPlugin = plugins['Oskari.userinterface.Flyout'];
+            let flyoutPlugin = plugins['Oskari.userinterface.Flyout'];
             if (flyoutPlugin !== null && flyoutPlugin !== undefined) {
                 const flyout = me.createFlyout(extension, flyoutPlugin, count, extensionInfo);
                 const flyoutElem = flyout.getElement();
@@ -288,8 +274,8 @@ Oskari.clazz.define('Oskari.userinterface.bundle.ui.UserInterfaceBundleInstance'
                 };
             }
 
-            tilePlugin = plugins['Oskari.userinterface.Tile'];
-            tile = null;
+            let tilePlugin = plugins['Oskari.userinterface.Tile'];
+            let tile = null;
             if (tilePlugin !== null && tilePlugin !== undefined) {
                 tile = me.createTile(extension, tilePlugin, count, extensionInfo);
 
@@ -300,12 +286,11 @@ Oskari.clazz.define('Oskari.userinterface.bundle.ui.UserInterfaceBundleInstance'
                 me.tileContainer.append(tile);
             }
 
-            viewPlugin = plugins['Oskari.userinterface.View'];
-            view = null;
+            let viewPlugin = plugins['Oskari.userinterface.View'];
+            let view = null;
             if (viewPlugin !== null && viewPlugin !== undefined) {
                 view = me.createView(extension, viewPlugin, count, extensionInfo);
-                el = view;
-                viewPlugin.setEl(el.get());
+                viewPlugin.setEl(view.get());
                 viewPlugin.startPlugin();
             }
 
