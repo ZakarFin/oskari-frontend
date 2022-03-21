@@ -384,36 +384,32 @@ Oskari.clazz.define('Oskari.userinterface.bundle.ui.UserInterfaceBundleInstance'
          * @method createTile
          *
          * creates menubar tile using the tile template
+         * @param extension instance of a bundle
+         * @param plugin "Oskari.userinterface.Tile" plugin of extension
          */
         createTile: function (extension, plugin, count, extensionInfo) {
-            var me = this,
-                // container = jQuery('#menubar'),
-                tile = this.compiledTemplates['Oskari.userinterface.Tile'].clone(true, true),
-                tilePlugin = extension.plugins['Oskari.userinterface.Tile'],
-                title = tile.children('.oskari-tile-title'),
-                tileClick = function () {
-                    // plugin.setExtensionState();
-                    tile.off('click');
-                    if (tilePlugin.clickHandler) {
-                        tilePlugin.clickHandler(extensionInfo.state);
-                    } else {
-                        me.getSandbox().postRequestByName(
-                            'userinterface.UpdateExtensionRequest', [extension, 'toggle']
-                        );
-                    }
-                    window.setTimeout(
-                        function () {
-                            tile.on('click', tileClick);
-                        },
-                        500
+            const sandbox = this.getSandbox();
+            const tile = this.compiledTemplates['Oskari.userinterface.Tile'].clone(true, true);
+            const title = tile.children('.oskari-tile-title');
+            const tileClick = () => {
+                tile.off('click');
+                if (plugin.clickHandler) {
+                    // TODO: can't find a tile with method clickHandler() in codebase so we could remove this?
+                    plugin.clickHandler(extensionInfo.state);
+                } else {
+                    sandbox.postRequestByName(
+                        'userinterface.UpdateExtensionRequest', [extension, 'toggle']
                     );
-                };
-            // status;
+                }
+                window.setTimeout(
+                    function () {
+                        tile.on('click', tileClick);
+                    },
+                    500
+                );
+            };
             title.append(plugin.getTitle());
-            // status = tile.children('.oskari-tile-status');
-
             tile.on('click', tileClick);
-
             plugin.setEl(tile.get());
 
             return tile;
