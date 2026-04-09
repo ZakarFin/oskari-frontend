@@ -23,7 +23,7 @@ export const Toolbar = ({ groups, onButtonClick, onButtonEnter, onButtonLeave })
             {groups.map((group) => (
                 <div
                     className='toolrow'
-                    tbgroup={group.id}
+                    data-tbgroup={group.id}
                     key={group.id}
                 >
                     {group.buttons.map((button) => (
@@ -32,7 +32,7 @@ export const Toolbar = ({ groups, onButtonClick, onButtonEnter, onButtonLeave })
                             id={button.domId}
                             key={button.id}
                             title={button.tooltip}
-                            tool={button.id}
+                            data-tool={button.id}
                             data-icon={button.iconCls}
                             data-toggle-change-icon={button.toggleChangeIcon}
                             data-active-color={button.activeColor}

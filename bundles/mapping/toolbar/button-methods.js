@@ -113,8 +113,8 @@ Oskari.clazz.category('Oskari.mapframework.bundle.toolbar.ToolbarBundleInstance'
         var toolbar = me.getToolbarContainer(pConfig ? pConfig.toolbarid : null, pConfig);
         var toolbarParent = toolbar.parents('.oskariui-center').find('div').first();
         var offset = toolbarParent.offset();
-        var group = toolbar.find('div.toolrow[tbgroup=' + prefixedGroup + ']');
-        var button = group.find('div.tool[tool=' + pId + ']');
+        var group = toolbar.find('div.toolrow[data-tbgroup=' + prefixedGroup + ']');
+        var button = group.find('div.tool[data-tool=' + pId + ']');
 
         if (typeof btn.children === 'undefined' || !pConfig.childPosition) {
             return;
