@@ -187,6 +187,8 @@ Oskari.clazz.define('Oskari.mapframework.bundle.toolbar.ToolbarBundleInstance',
                 tbcontainer.find('.oskariui-menutoolbar-closebox div').on('click', data.closeBoxCallback);
             }
 
+            this._renderToolbar(tbid);
+
             return c;
         },
         /**
@@ -205,6 +207,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.toolbar.ToolbarBundleInstance',
             } else {
                 tbcontainer.find('.oskariui-toolbar-title').remove();
             }
+            this._renderToolbar(tbid);
             return c;
         },
         changeMenuToolbarTitle: function (title) {
@@ -371,6 +374,11 @@ Oskari.clazz.define('Oskari.mapframework.bundle.toolbar.ToolbarBundleInstance',
             sandbox.requestHandler('Toolbar.SelectToolButtonRequest', null);
 
             this.sandbox.unregisterStateful(this.mediator.bundleId);
+            for (var toolbarId in this.containers) {
+                if (this.containers.hasOwnProperty(toolbarId)) {
+                    this._unmountToolbar(toolbarId);
+                }
+            }
             me.sandbox.unregister(me);
             me.started = false;
         },
@@ -412,25 +420,21 @@ Oskari.clazz.define('Oskari.mapframework.bundle.toolbar.ToolbarBundleInstance',
                     // old configs don't have the toolbar id prefixed
                     group = 'default-' + group;
                 }
-                var toolbar = this.getToolbarContainer();
 
                 // remove any old selection
                 this._deactiveTools(group);
 
-                var groupContainer = toolbar.find('div.toolrow[tbgroup=' + group + ']');
-                if (groupContainer.length > 0) {
-                    var button = groupContainer.find('div.tool[tool=' + tool + ']');
-                    if (button.length > 0) {
-                        // select the new one
-                        button.addClass('selected');
-                        // "click" the button
-                        this.buttons[group][tool].callback();
-                    }
-                    // if button has not yet been added
-                    // we should obey the state in add button
+                if (this.buttons[group] && this.buttons[group][tool]) {
+                    this._ensureButtonUiState(this.buttons[group][tool]);
+                    this.buttons[group][tool].__ui.selected = true;
+                    // "click" the button
+                    this.buttons[group][tool].callback();
                 }
+                this._renderAllToolbars();
             } else {
                 this.selectedButton = null;
+                this._deactiveTools();
+                this._renderAllToolbars();
             }
         },
         /**
@@ -455,6 +459,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.toolbar.ToolbarBundleInstance',
         _removeToolbar: function (tbid) {
             var tb = this.toolbars[tbid];
             if (tb) {
+                this._unmountToolbar(tbid);
                 tb.remove();
             }
             this.toolbars[tbid] = undefined;
@@ -488,6 +493,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.toolbar.ToolbarBundleInstance',
          */
         _addToolbar: function (tbid, data) {
             this.getToolbarContainer(tbid, data);
+            this._renderToolbar(tbid);
         },
         _updateToolbar: function (ptbid, data) {
             var me = this;
@@ -526,26 +532,28 @@ Oskari.clazz.define('Oskari.mapframework.bundle.toolbar.ToolbarBundleInstance',
             this._toolbarConfigs[tbid].colours = data.colours;
 
             // change toolbar toolicons
-            var c = me.containers[tbid];
-            if (c) {
-                c.find('.tool').each(function () {
-                    var button = jQuery(this);
-                    var iconCls = button.attr('data-icon');
-                    button.removeClass(iconCls + '-light');
-                    button.removeClass(iconCls + '-dark');
-
+            for (var groupId in this.buttons) {
+                if (!this.buttons.hasOwnProperty(groupId) || groupId.indexOf(tbid + '-') !== 0) {
+                    continue;
+                }
+                for (var buttonId in this.buttons[groupId]) {
+                    if (!this.buttons[groupId].hasOwnProperty(buttonId)) {
+                        continue;
+                    }
+                    var buttonConfig = this.buttons[groupId][buttonId];
+                    this._ensureButtonUiState(buttonConfig);
                     var color = data.colours.background;
-                    if (button.hasClass('selected') && button.attr('data-toggle-change-icon') === 'true' && button.attr('data-active-color')) {
-                        color = button.attr('data-active-color');
+                    if (buttonConfig.__ui.selected === true && buttonConfig.toggleChangeIcon === true && buttonConfig.__ui.activeColor) {
+                        color = buttonConfig.__ui.activeColor;
                     }
-
                     if (Oskari.util.getColorBrightness(color) === 'light') {
-                        button.addClass(iconCls + '-light');
+                        this._setIconThemeClass(buttonConfig, 'light');
                     } else {
-                        button.addClass(iconCls + '-dark');
+                        this._setIconThemeClass(buttonConfig, 'dark');
                     }
-                });
+                }
             }
+            this._renderToolbar(tbid);
         },
         /**
          * @static
