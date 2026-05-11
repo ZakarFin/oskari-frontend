@@ -1,8 +1,11 @@
 import React from 'react';
 import { Message } from 'oskari-ui';
+import { getReactRoot, unmountReactRoot } from 'oskari-ui/components/window';
+import { Toolbar } from './view/Toolbar';
 
 import './button-methods';
 import './default-buttons';
+import { ToolbarHandler } from './view/ToolbarHandler';
 
 import './request/ShowMapMeasurementRequest';
 import './request/ShowMapMeasurementRequestHandler.ol';
@@ -37,16 +40,13 @@ Oskari.clazz.define('Oskari.mapframework.bundle.toolbar.ToolbarBundleInstance',
     function () {
         this.sandbox = null;
         this.started = false;
-        this.buttons = {};
-        this.selectedButton = null;
-        this.defaultButton = null;
         this.container = null;
         this.menutoolbarcontainer = null;
         this.containers = {};
         this.toolbars = {};
-        this.groupsToToolbars = {};
         this._toolbarConfigs = {};
         this.currentMeasureTool = null;
+        this.handler = null;
     }, {
         /**
          * @static
@@ -98,6 +98,9 @@ Oskari.clazz.define('Oskari.mapframework.bundle.toolbar.ToolbarBundleInstance',
                 sandbox = Oskari.getSandbox(sandboxName);
             sandbox.register(me);
             me.setSandbox(sandbox);
+
+            // Create handler to manage button/group state
+            this.handler = new ToolbarHandler(this);
 
             var defaultContainerId = conf.defaultToolbarContainer || '#toolbar';
             this.container = jQuery(defaultContainerId);
@@ -296,6 +299,57 @@ Oskari.clazz.define('Oskari.mapframework.bundle.toolbar.ToolbarBundleInstance',
 
             return c;
         },
+
+        /**
+         * @method _renderToolbar
+         * Renders toolbar groups and buttons using React component.
+         * Gets button data from handler and mounts React root into container.
+         * @private
+         */
+        _renderToolbar: function (toolbarId) {
+            var tbid = toolbarId || 'default';
+            var container = this.containers[tbid];
+            if (!container || !container.length || !container[0]) {
+                return;
+            }
+            var groups = this.handler.collectToolbarGroups(tbid);
+            getReactRoot(container[0]).render(
+                React.createElement(Toolbar, {
+                    groups: groups,
+                    onButtonClick: (buttonId, groupId) => this._clickButton(buttonId, groupId),
+                    onButtonEnter: (buttonId, groupId) => this.handler.onButtonMouseEnter(buttonId, groupId),
+                    onButtonLeave: (buttonId, groupId) => this.handler.onButtonMouseLeave(buttonId, groupId)
+                })
+            );
+        },
+
+        /**
+         * @method _renderAllToolbars
+         * Renders all registered toolbar containers.
+         * @private
+         */
+        _renderAllToolbars: function () {
+            for (var toolbarId in this.containers) {
+                if (this.containers.hasOwnProperty(toolbarId)) {
+                    this._renderToolbar(toolbarId);
+                }
+            }
+        },
+
+        /**
+         * @method _unmountToolbar
+         * Unmounts React root from toolbar container.
+         * @private
+         */
+        _unmountToolbar: function (toolbarId) {
+            var tbid = toolbarId || 'default';
+            var container = this.containers[tbid];
+            if (!container || !container.length || !container[0]) {
+                return;
+            }
+            unmountReactRoot(container[0]);
+        },
+
         /**
          * @method onEvent
          * @param {Oskari.mapframework.event.Event} event a Oskari event object
@@ -406,49 +460,27 @@ Oskari.clazz.define('Oskari.mapframework.bundle.toolbar.ToolbarBundleInstance',
          * @param {Object} state bundle state as JSON
          */
         setState: function (state) {
-            if (!state) {
-                // TODO: loop buttons and check which had selected = true for default tool
+            if (!state || !state.selected) {
+                // No selection to restore
+                this._renderAllToolbars();
                 return;
             }
-            if (state.selected) {
-                this.selectedButton = state.selected;
-                // get references
-                var tool = state.selected.id;
-                var group = state.selected.group;
-                var groupName = group.split('-');
-                if (groupName.length < 2) {
-                    // old configs don't have the toolbar id prefixed
-                    group = 'default-' + group;
-                }
 
-                // remove any old selection
-                this._deactiveTools(group);
-
-                if (this.buttons[group] && this.buttons[group][tool]) {
-                    this._ensureButtonUiState(this.buttons[group][tool]);
-                    this.buttons[group][tool].__ui.selected = true;
-                    // "click" the button
-                    this.buttons[group][tool].callback();
-                }
-                this._renderAllToolbars();
-            } else {
-                this.selectedButton = null;
-                this._deactiveTools();
-                this._renderAllToolbars();
-            }
+            // Delegate to handler to restore state
+            this.handler.setBundleState(state);
+            // Trigger re-render
+            this._renderAllToolbars();
         },
         /**
          * @method getState
          * @return {Object} bundle state as JSON
          */
         getState: function () {
-            var state = {
-
-            };
-            if (this.selectedButton) {
-                state.selected = this.selectedButton;
+            var state = {};
+            var selectedButton = this.handler.getSelectedButton && this.handler.getSelectedButton();
+            if (selectedButton) {
+                state.selected = selectedButton;
             }
-
             return state;
         },
 
