@@ -302,6 +302,20 @@ const getWorkaroundForDash = olStroke => {
     return [olStyle];
 };
 
+const injectSVGFillStyle =  (inlineSvg, fillStyle) => {
+    if (!inlineSvg || !fillStyle) {
+        return;
+    }
+    const img = new Image();
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(inlineSvg);
+
+    img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const pattern = ctx.createPattern(img, 'repeat');
+        fillStyle.setColor(pattern);
+    };
+};
 /**
  * @method getFillStyle
  * @param styleDef Oskari style definition
@@ -323,8 +337,23 @@ const getFillStyle = styleDef => {
             return new olStyleFill({ color: pattern });
         }
     }
-
-    return new olStyleFill({ color });
+    const fillStyle = new olStyleFill({ color });
+    const svg = { ...styleDef?.fill?.area?.svg };
+    console.log(svg);
+    //mapModule.isSvg(styleDef.image) could be used?
+    if (svg) {
+        // if we have an svg
+        /*
+        const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+        <line x1="0" y1="20" x2="20" y2="0"
+                stroke="${color}" stroke-width="5"/>
+        </svg>
+        `;*/
+        injectSVGFillStyle(svg, fillStyle);
+    }
+    // can be skipped until here
+    return fillStyle;
 };
 
 /**
