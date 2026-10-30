@@ -30,11 +30,12 @@ Oskari.registerLocalization(
         "resultBox": {
             "close": "Sulje",
             "title": "Hakutulokset",
-            "alternatives": "Tällä paikalla on seuraavia vaihtoehtoisia nimiä:"
+            "alternatives": "Tällä paikalla on seuraavia vaihtoehtoisia nimiä:",
+            "contentCard": "Paikan tietokortti"
         },
         "guidedTour": {
             "title": "Haku",
-            "message": "Haku-valikossa voit hakea paikkoja tai paikkatietoja. <br/><br/>  Paikkahaku: Hae paikkoja paikannimen, osoitteen tai kiinteistötunnuksen perusteella. Klikkaa hakutulosta ja kartta keskittyy valittuun paikkaan. <br/><br/> Metatietohaku: Hae paikkatietoaineistoja, -aineistosarjoja ja -palveluja. Käytä tekstihakua tai valmiiksi määriteltyjä hakuehtoja. Hakutuloksista pääset lukemaan metatietokuvailun tai avaamaan valitun aineiston kartalla, jos karttataso on saatavilla.",
+            "message": "Haku-valikossa voit hakea paikkoja tai paikkatietoja. <br/><br/>  Paikkahaku: Hae paikkoja paikannimen, osoitteen tai kiinteistötunnuksen perusteella. Klikkaa hakutulosta ja kartta keskittyy valittuun paikkaan. <br/><br/> Metatietohaku: Hae paikkatietoaineistoja, -aineistosarjoja ja -palveluja. Hakutuloksista pääset lukemaan metatietokuvailun tai avaamaan valitun aineiston kartalla, jos karttataso on saatavilla.",
             "openLink": "Näytä Haku",
             "closeLink": "Piilota Haku",
             "tileText": "Haku"

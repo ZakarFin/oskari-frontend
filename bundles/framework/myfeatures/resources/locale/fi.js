@@ -9,16 +9,16 @@ Oskari.registerLocalization(
         },
         "flyout": {
             "title": "Omien aineistojen tuonti",
-            "description": "Lataa aineisto tietokoneeltasi yhdeksi zip-tiedostoksi pakattuna, joka sisältää tarvittavat tiedostot jostain seuraavasta tiedostomuodosta:<ul><li>Shapefile (.shp, .shx, .dbf ja .prj sekä mahdollinen .cpg)</li><li>GPX-siirtotiedosto (.gpx)</li><li>GeoPackage-tiedosto (.gpkg)</li><li>MapInfo (.mif ja .mid)</li><li>Google Maps (.kml)</li></ul>Zip-tiedosto saa sisältää vain yhden karttatason ja sen maksimikoko on {maxSize, number} Mt. Purettuna tiedoston koko saa olla korkeintaan {unzippedMaxSize, number} Mt.",
-            "help": "Lataa aineisto tietokoneeltasi pakattuna zip-tiedostoon. Tarkista, että aineisto on oikeassa tiedostomuodossa ja koordinaattijärjestelmässä.",
+            "description": "Lataa aineisto tietokoneeltasi. GPX- (.gpx), KML- (.kml), GeoJSON- (.json tai .geojson) ja GeoPackage-tiedoston (.gpkg) voit lähettää yksittäisenä tiedostona. Useita tiedostoja vaativat muodot pitää lähettää yhtenä zip-tiedostona, joka sisältää tarvittavat tiedostot jostain seuraavista tiedostomuodoista:<ul><li>Shapefile (.shp, .shx, .dbf ja .prj sekä mahdollinen .cpg)</li><li>GPX (.gpx)</li><li>KML (.kml)</li><li>GeoPackage (.gpkg)</li><li>GeoJSON (.json tai .geojson)</li><li>MapInfo (.mif ja .mid)</li></ul>Lähetetty tiedosto saa sisältää vain yhden karttatason ja sen maksimikoko on {maxSize, number} Mt. Zip-tiedostosta purettuna yksittäisen tiedoston koko saa olla korkeintaan {unzippedMaxSize, number} Mt.",
+            "help": "Lataa aineisto tietokoneeltasi. GPX-, KML-, GeoJSON- ja GeoPackage-tiedoston voi lähettää yksittäisenä tiedostona. Useita tiedostoja vaativissa muodoissa tarkista, että kaikki tarvittavat tiedostot ovat zip-paketissa ja että aineisto on oikeassa tiedostomuodossa ja koordinaattijärjestelmässä.",
             "success": "Aineistosta tuotiin {count, plural, one {# kohde} other {# kohdetta}} onnistuneesti. Voit tarkastella aineistoa Omat tiedot -valikon Omat aineistot -välilehden kautta.",
             "tabs" : {
-                "general": "Yleiset",
-                "visualization": "Visualisointi",
-                "layerFields": "Kentät"
+                "general": "Perustiedot",
+                "visualization": "Esitystapa",
+                "layerFields": "Attribuutit"
             },
             "layer": {
-                "name": "Karttatason nimi",
+                "name": "Aineiston nimi",
                 "desc": "Kuvaus",
                 "source": "Tietolähde",
                 "srs": "EPSG-koodi"
@@ -56,10 +56,13 @@ Oskari.registerLocalization(
             }
         },
         "tab": {
-            "title": "Aineistot (Beta)",
-            "editLayer": "Muokkaa karttatasoa",
-            "deleteLayer": "Poista karttataso",
+            "title": "Aineistot",
+            "editLayer": "Muokkaa aineistoa",
+            "deleteLayer": "Poista aineisto",
             "grid": {
+                "removeFromMap": "Poista kartalta",
+                "focusLayer": "Keskitä kohteisiin",
+                "addAndFocusLayer": "Lisää kartalle ja keskitä kohteisiin",
                 "name": "Nimi",
                 "desc": "Kuvaus",
                 "source": "Tietolähde",
@@ -69,10 +72,11 @@ Oskari.registerLocalization(
                 "removeButton": "Poista",
                 "actions": "Toiminnot",
                 "createDate": "Luontiaika",
-                "contentEditor": "Sisältöeditori"
+                "contentEditor": "Muokkaa",
+                "featuredata": "Avaa kohdetiedot"
             },
             "confirmDeleteMsg": "Haluatko poistaa aineiston \"{name}\"?",
-            "downloadTooltip": "Lataa aineisto",
+            "downloadTooltip": "Lataa aineisto omalle koneellesi GeoJSON-formaatissa.",
             "confirmDeleteFieldMsg": "Haluatko poistaa kentän \"{name}\"?",
             "buttons": {
                 "ok": "OK",
@@ -98,9 +102,11 @@ Oskari.registerLocalization(
             }
         },
         "featureEditor": {
-            "title": "Sisältöeditori",
+            "title": "Yksittäisen kohteen tiedot",
+            "titleNew": "Lisää uusi kohde",
             "addFeatureTool": "Lisää kohde",
             "deleteFeatureTool": "Poista kohde",
+            "featureToolTooltip": "Muokkaa kohdetta",
             "confirmDelete": "Haluatko varmasti poistaa kohteen?",
             "featureUpdate": {
                 "header": "Kohde päivitetty",
@@ -116,22 +122,40 @@ Oskari.registerLocalization(
                 "addFeature": "Lisää kohde",
                 "fieldName": "Nimi",
                 "fieldType": "Tyyppi",
+                "typeHelp": "Tyyppi vaikuttaa siihen, miten attribuutin arvo esitetään käyttöliittymässä.",
+                "typeHelpNew": "Voit lisätä attribuutteja vain tallentamattomalle aineistolle.",
+                "tableInfoText": "Avaa aineisto klikkaamalla aineiston nimeä. Näet yksittäisen kohteen tiedot klikkaamalla kohdetta kartalla.",
                 "errors": {
                     "fieldAlreadyExists": "Kenttä on jo olemassa",
                     "isValidJSONKey": "Kentän nimi sisältää kiellettyjä merkkejä."
-                }
+                },
+                "actions": {
+                    "hideField": "Piilota käyttäjältä",
+                    "showField": "Näytä käyttäjälle",
+                    "moveUp": "Siirrä ylöspäin",
+                    "moveDown": "Siirrä alaspäin",
+                    "editLocale": "Muokkaa attribuutin nimeä eri kielillä.",
+                    "editFormat": "Valitse attribuutin tyyppi ja tapa, jolla tiedot esitetään käyttöliittymässä.",
+                },
+                "modal": {
+                    "locale": {
+                        "title": "Attribuutin nimi eri kielillä"
+                    },
+                    "format": {
+                        "title": "Attribuutin arvon esitystapa"
+                    }
+            }
             },
             "types": {
-                "String": "Merkkijono",
-                "Boolean": "Boolean",
+                "String": "Teksti",
                 "Integer": "Kokonaisluku",
                 "Double": "Desimaaliluku",
                 "Date": "Päivämäärä",
-                "Timestamp": "Aikaleima",
-                "UUID": "UUID"
+                "Timestamp": "Päivämäärä ja kellonaika",
+                "Boolean": "Totuusarvo"
             },
             "layerSelectionPanel": {
-                "setCurrentLayerTitle": "Valitse aineisto",
+                "setCurrentLayerTitle": "Valitse aineisto tai lisää uusi aineisto",
                 "buttons": {
                     "setCurrentLayer": "Valitse aineisto",
                     "addNewLayer": "Uusi aineisto"

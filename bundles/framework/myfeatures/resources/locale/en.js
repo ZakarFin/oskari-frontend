@@ -9,16 +9,16 @@ Oskari.registerLocalization(
         },
         "flyout": {
             "title": "Dataset Import",
-            "description": "Upload a dataset from your computer as a zipped file which contains all required files from one of the following file formats: <ul><li>Shapefile (.shp, .shx, .dbf and .prj, optionally .cpg)</li><li>GPX-file (.gpx)</li><li>GeoPackage-file (.gpkg)</li><li>MapInfo (.mif and .mid)</li><li>Google Maps (.kml)</li></ul>The zipped file can contain only one dataset and it can be at most {maxSize, number} Mb. Individual extracted files cannot exceed {unzippedMaxSize, number} Mb in size.",
-            "help": "Upload a dataset from your computer as a zipped file. Please check that all the files are in the correct file format and coordinate reference system.",
+            "description": "Upload a dataset from your computer. GPX (.gpx), KML (.kml), GeoJSON (.json or .geojson) and GeoPackage (.gpkg) can be uploaded as a single file. Multi-file formats must be uploaded as a zipped file that contains all required files from one of the following file formats: <ul><li>Shapefile (.shp, .shx, .dbf and .prj, optionally .cpg)</li><li>GPX (.gpx)</li><li>KML (.kml)</li><li>GeoPackage (.gpkg)</li><li>GeoJSON (.json or .geojson)</li><li>MapInfo (.mif and .mid)</li></ul>The uploaded file can contain only one dataset and it can be at most {maxSize, number} Mb. Files extracted from zip archives cannot exceed {unzippedMaxSize, number} Mb in size.",
+            "help": "Upload a dataset from your computer. GPX, KML, GeoJSON and GeoPackage can be uploaded as a single file. For multi-file formats, check that all required files are packaged in a zip file and that the data is in the correct file format and coordinate reference system.",
             "success": "The dataset has been imported with {count, plural, one {# feature} other {# features}}. You can now find it in the \"My data\" menu.",
             "tabs": {
-                "general": "General",
+                "general": "Basic information",
                 "visualization": "Visualization",
-                "layerFields": "Layer fields"
+                "layerFields": "Attributes"
             },
             "layer": {
-                "name": "Map layer name",
+                "name": "Dataset name",
                 "desc": "Description",
                 "source": "Data source",
                 "srs": "EPSG code"
@@ -57,10 +57,13 @@ Oskari.registerLocalization(
             }
         },
         "tab": {
-            "title": "Datasets (Beta)",
-            "editLayer": "Edit map layer",
-            "deleteLayer": "Delete map layer",
+            "title": "Datasets",
+            "editLayer": "Edit dataset",
+            "deleteLayer": "Delete dataset",
             "grid": {
+                "removeFromMap": "Remove from map",
+                "focusLayer": "Center on features",
+                "addAndFocusLayer": "Add to map and center on features",
                 "name": "Name",
                 "desc": "Description",
                 "source": "Data source",
@@ -70,10 +73,11 @@ Oskari.registerLocalization(
                 "removeButton": "Delete",
                 "actions": "Actions",
                 "createDate": "Created",
-                "contentEditor": "Content editor"
+                "contentEditor": "Content editor",
+                "featuredata": "Open featuredata"
             },
             "confirmDeleteMsg": "Do you want to delete the dataset \"{name}\"?",
-            "downloadTooltip": "Download dataset",
+            "downloadTooltip": "Download the dataset to your computer in the GeoJSON format.",
             "confirmDeleteFieldMsg": "Do you want to delete the field  \"{name}\"?",
             "buttons": {
                 "ok": "OK",
@@ -99,9 +103,11 @@ Oskari.registerLocalization(
             }
         },
         "featureEditor": {
-            "title": "Feature editor",
+            "title": "Individual feature details",
+            "titleNew": "Add new feature",
             "addFeatureTool": "Add feature",
             "deleteFeatureTool": "Delete feature",
+            "featureToolTooltip": "Edit feature",
             "confirmDelete": "Do you want to delete the feature?",
             "featureUpdate": {
                 "success": "Feature properties updated successfully",
@@ -112,26 +118,44 @@ Oskari.registerLocalization(
                 "error": "Error occured during feature delete"
             },
             "featureLayer": {
-                "new": "New feature layer",
+                "new": "New dataset",
                 "addFeature": "Add feature",
                 "fieldName": "Name",
                 "fieldType": "Type",
+                "typeHelp": "The type affects how data in the attribute will be dispalyed in the user interface.",
+                "typeHelpNew": "You can add attributes to the dataset only before saving it.",
+                "tableInfoText": "Open the dataset by clicking its name. View the details of an individual feature by clicking the feature on the map.",
                 "errors": {
                     "fieldAlreadyExists": "Field already exists",
                     "isValidJSONKey": "Field contains illegal characters."
+                },
+                "actions": {
+                    "hideField": "Hide from user",
+                    "showField": "Show to user",
+                    "moveUp": "Move up",
+                    "moveDown": "Move down",
+                    "editLocale": "Edit attribute name in different languages.",
+                    "editFormat": "Select the attribute type and edit how the data will be displayed in the user interface.",
+                },
+                "modal": {
+                    "locale": {
+                        "title": "Attribute name in different languages",
+                    },
+                    "format": {
+                        "title": "Attribute value presentation",
+                    }
                 }
             },
             "types": {
-                "String": "String",
-                "Boolean": "Boolean",
-                "Integer": "Integer",
-                "Double": "Double",
+                "String": "Text",
+                "Integer": "Integer number",
+                "Double": "Decimal number",
                 "Date": "Date",
-                "Timestamp": "Timestamp",
-                "UUID": "UUID"
+                "Timestamp": "Date and time",
+                "Boolean": "Boolean"
             },
             "layerSelectionPanel": {
-                "setCurrentLayerTitle": "Select dataset",
+                "setCurrentLayerTitle": "Select dataset or add new dataset",
                 "buttons": {
                     "setCurrentLayer": "Select dataset",
                     "addNewLayer": "New dataset"

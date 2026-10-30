@@ -13,6 +13,7 @@ Oskari.registerLocalization({
             import: 'Importera',
             yes: 'Ja',
             no: 'Nej',
+            ok: 'OK',
             next: 'Nästa',
             previous: 'Föregående',
             print: 'Få utskrift',
@@ -31,7 +32,7 @@ Oskari.registerLocalization({
             copied: 'Kopieras'
         },
         error: {
-            generic: 'Something went wrong'
+            generic: 'Ett oväntat fel inträffade. Försök igen.'
         },
         table: {
             sort: {
@@ -41,6 +42,55 @@ Oskari.registerLocalization({
             },
             emptyText: 'Ingen data.'
         },
+        DateRange: {
+            dayjs: {
+                name: 'sv',
+                weekdays: ['söndag', 'måndag', 'tisdag', 'onsdag', 'torsdag', 'fredag', 'lördag'],
+                weekdaysShort: ['sön', 'mån', 'tis', 'ons', 'tor', 'fre', 'lör'],
+                weekdaysMin: ['sö', 'må', 'ti', 'on', 'to', 'fr', 'lö'],
+                months: ['januari', 'februari', 'mars', 'april', 'maj', 'juni', 'juli', 'augusti', 'september', 'oktober', 'november', 'december'],
+                monthsShort: ['jan', 'feb', 'mar', 'apr', 'maj', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'],
+                weekStart: 1,
+                yearStart: 4,
+                formats: {
+                    LT: 'HH:mm',
+                    LTS: 'HH:mm:ss',
+                    L: 'YYYY-MM-DD',
+                    LL: 'D MMMM YYYY',
+                    LLL: 'D MMMM YYYY [kl.] HH:mm',
+                    LLLL: 'dddd D MMMM YYYY [kl.] HH:mm'
+                }
+            },
+            lang: {
+                locale: 'sv_SE',
+                placeholder: 'Välj datum',
+                rangePlaceholder: ['Startdatum', 'Slutdatum'],
+                yearPlaceholder: 'Välj år',
+                quarterPlaceholder: 'Välj kvartal',
+                monthPlaceholder: 'Välj månad',
+                weekPlaceholder: 'Välj vecka',
+                rangeYearPlaceholder: ['Startår', 'Slutår'],
+                rangeQuarterPlaceholder: ['Startkvartal', 'Slutkvartal'],
+                rangeMonthPlaceholder: ['Startmånad', 'Slutmånad'],
+                rangeWeekPlaceholder: ['Startvecka', 'Slutvecka'],
+                today: 'I dag',
+                now: 'Nu',
+                ok: 'OK',
+                clear: 'Rensa',
+                week: 'Vecka',
+                monthSelect: 'Välj månad',
+                yearSelect: 'Välj år',
+                decadeSelect: 'Välj årtionde',
+                previousMonth: 'Förra månaden',
+                nextMonth: 'Nästa månad',
+                previousYear: 'Föregående år',
+                nextYear: 'Nästa år'
+            },
+            timePickerLocale: {
+                placeholder: 'Välj tid',
+                rangePlaceholder: ['Starttid', 'Sluttid']
+            }
+        },
         ColorPicker: {
             tooltip: 'Välj färg',
             moreColors: 'Mera färger'
@@ -48,11 +98,11 @@ Oskari.registerLocalization({
         StyleEditor: {
             subheaders: {
                 styleFormat: 'Typ av geometri',
-                name: 'Stilets namn',
-                style: 'Stilet',
-                pointTab: 'Punkten',
+                name: 'Stilnamn',
+                style: 'Stil',
+                pointTab: 'Punkt',
                 lineTab: 'Linje',
-                areaTab: 'Området'
+                areaTab: 'Område'
             },
             tooltips: {
                 transparent: 'Ingen fyllning',
@@ -63,29 +113,29 @@ Oskari.registerLocalization({
                 thick_horizontal: 'Tjock horisontal linje'
             },
             fill: {
-                color: 'Ifyllnadsfärg för område',
+                color: 'Fyllnadsfärg',
                 area: {
-                    pattern: 'Ifyllnandsmönster för område'
+                    pattern: 'Fyllnadssmönster'
                 }
             },
             image: {
                 shape: 'Ikon',
                 size: 'Storlek',
                 fill: {
-                    color: 'Ifyllnadsfärg för ikon'
+                    color: 'Färg'
                 }
             },
             stroke: {
-                color: 'Linjens färg',
-                lineCap: 'Linjens ändpunkter',
-                lineDash: 'Linjens stil',
+                color: 'Färg',
+                lineCap: 'Ändpunkter',
+                lineDash: 'Stil',
                 lineJoin: 'Hörn',
                 width: 'Bredd',
                 area: {
-                    color: 'Linjens färg',
-                    lineDash: 'Linjens stil',
+                    color: 'Kantlinjens färg',
+                    lineDash: 'Kantlinjens stil',
                     lineJoin: 'Hörn',
-                    width: 'Linjens bredd'
+                    width: 'Kantlinjens bredd'
                 }
             }
         },
@@ -101,7 +151,7 @@ Oskari.registerLocalization({
         },
         LocalizationComponent: {
             otherLanguages: 'Andra språk',
-            othersTip: 'Översättningar kommer att visas när tjänsten används på olika språk',
+            othersTip: 'Översättningar visas på på språk som används på användargränssnittet.',
             locale: {
                 generic: 'på ({0})',
                 fi: 'på finska',
@@ -161,112 +211,102 @@ Oskari.registerLocalization({
             'bingmaps': 'Kartlager i rasterformat',
             'wfs': 'Kartlager i vektorformat',
             'vector': 'Kartlager i vektorformat',
-            'userlayer': 'Eget dataset',
+            'userlayer': 'Egen datamängd',
             'myplaces': 'Mitt kartlager',
             'analysislayer': 'Min analys',
             'tiles3d': '3D kartlager'
         },
         "FeatureEditorView": {
-            "title": "Feature editor",
+            "title": "Objektredigerare",
             "info": {
-                "layerLabel": "Modifying layer",
-                "featureModifyInfo": "Choose a feature to modify by clicking it on the map.",
-                "loading": "Loading layer metadata...",
-                "problem": "Insufficient metadata for layer!"
+                "layerLabel": "Redigerar datamängden",
+                "featureModifyInfo": "Klicka på ett objekt på kartan för att ändra det.",
+                "loading": "Laddar metadata...",
+                "problem": "Datamängden saknar nödvändiga metadata."
             },
-            "newTitle": "New feature",
-            "setCurrentLayerTitle": "Select map layer",
+            "newTitle": "Ny objekt",
+            "editTitle": "Redigera objekt",
             "geometrylist": {
-                "title": "Geometry",
-                "empty": "Draw a geometry on the map",
+                "title": "Redigera på kartan",
+                "empty": "Rita objekt på kartan",
                 "notRecognized": "Geometry type ({type}) not recognized. Allowing all types to be added. Make sure the interface is ok with this.",
-                "editing": "Draw on the map",
-                "Point": "Point",
-                "LineString": "Line",
-                "Polygon": "Area",
+                "editing": "Rita på kartan",
+                "Point": "Punkt",
+                "LineString": "Linje",
+                "Polygon": "Område",
             },
             "editConfirm": {
                 "title": "The feature to edit is being switched",
-                "msg": "Unsaved changes will be lost. Do you want to switch?"
+                "msg": "Osparade ändringar går förlorade. Vill du byta objekt?"
             },
-            "exitConfirm": "Unsaved changes will be lost. Do you want to exit?",
-            "originalValue": "Original value",
-            "missingValue": "Value missing",
-            "modified": "Modified",
-            "restoreOriginal": "Restore original value",
-            "multipleFeatureModifyInfo": "You can also choose multiple features from the map by pressing the ctrl-button on your keyboard.",
-            "toolInfo": "Choose point, line or polygon tool to draw new geometries.",
-            "geometryModifyInfo": "With geometry editing tool you can edit feature geometry.",
-            "geometryDeleteInfo": "With geometry delete tool you can remove one geometry from feature with multiple geometries.",
+            "exitConfirm": "Osparade ändringar går förlorade. Vill du avsluta?",
+            "originalValue": "Ursprungligt värde",
+            "missingValue": "Värdet fattas",
+            "modified": "Redigerad",
+            "restoreOriginal": "Återställ ursprungligt värde",
+            "multipleFeatureModifyInfo": "Du kan också välja flera objekt på kartan genom att hålla ned Ctrl-tangenten och klicka på objekten.",
+            "toolInfo": "Välj punkt, linje eller område för att rita en ny geometri.",
+            "geometryModifyInfo": "Med geometriredigeringsverktyget kan du redigera objektets geometri.",
+            "geometryDeleteInfo": "Med verktyget för att ta bort geometri kan du ta bort en geometri från ett objekt med flera geometrier.",
             "buttons": {
-                "save": "Save",
-                "cancel": "Cancel",
-                "close": "Close",
-                "ok": "Ok",
-                "delete": "Delete",
-                "addFeature": "Add feature",
-                "editFeature": "Edit feature",
-                "editMultipleFeatures": "Edit multiple features",
-                "deleteFeature": "Delete feature",
-                "yes": "Yes",
-                "no": "No",
-                "setCurrentLayer": "Select layer",
-                "addNewLayer": "New dataset"
+                "delete": "Ta bort",
+                "addFeature": "Lägg till objekt",
+                "deleteFeature": "Ta bort objekt"
             },
             "tools": {
-                "point": "Add point geometry",
-                "line": "Add line geometry",
-                "area": "Add area geometry",
-                "geometryEdit": "Edit geometry on the map",
-                "finishSketch": "Finish drawing on map",
-                "remove": "Remove one geometry"
+                "point": "Punkt",
+                "line": "Linje",
+                "area": "Område",
+                "geometryEdit": "Rita objektet på kartan",
+                "finishSketch": "Avsluta ritning",
+                "remove": "Ta bort en geometri"
             },
             "featureUpdate": {
-                "header": "Feature update",
-                "success": "Feature properties updated successfully",
-                "error": "Error occured during feature properties update"
+                "header": "Uppdatera objekt",
+                "success": "Objektegenskaperna har uppdaterats",
+                "error": "Ett fel uppstod vid uppdatering av objektegenskaperna"
             },
             "multipleFeaturesUpdate": {
-                "header": "Feature update",
-                "success": "Features properties updated successfully",
-                "error": "Error occured during features properties update"
+                "header": "Uppdatera flera objekten",
+                "success": "Objektegenskaperna har uppdaterats",
+                "error": "Ett fel uppstod vid uppdatering av objektegenskaperna"
             },
             "featureDelete": {
-                "header": "Feature delete",
-                "success": "Feature deleted successfully",
-                "error": "Error occured during feature delete"
+                "header": "Ta bort objekt",
+                "success": "Objektet har tagits bort",
+                "error": "Ett fel uppstod när objektet skulle tas bort"
             },
             "geometryDelete": {
-                "header": "Geometry delete",
-                "success": "Geometry deleted successfully",
-                "error": "Error occured during geometry delete"
+                "header": "Ta bort geometri",
+                "success": "Geometrin har tagits bort",
+                "error": "Ett fel uppstod när geometrin skulle tas bort"
             },
             "unsavedChanges": {
-                "title": "Unsaved changes",
-                "text": "There are some unsaved changes. Please select below action to perform."
+                "title": "Osparade ändringar",
+                "text": "Du har osparade ändringar. Välj hur du vill fortsätta."
             },
             "deleteGeometryDialog": {
-                "title": "Delete geometry",
-                "text": "Are you sure you want to delete geometry?"
+                "title": "Ta bort geometri",
+                "text": "Är du säker på att du vill ta bort geometrin?"
             },
             "deleteFeature": {
-                "title": "Delete feature",
-                "text": "Are you sure you want to delete feature?"
+                "title": "Ta bort objekt",
+                "text": "Är du säker på att du vill ta bort objektet?"
             },
             "formValidationError": {
-                "title": "Form validation error",
-                "text": "Please correct selected field values"
+                "title": "Valideringsfel i formuläret",
+                "text": "Korrigera värdena i de markerade fälten"
             },
             "formValidationNumberError": {
-                "title": "Number validation error",
-                "text": "Please put correct number value"
+                "title": "Felaktigt numeriskt värde",
+                "text": "Korrigera numeriskt värde"
              },
             "modifyMultipleFeaturesConfirmation": {
-                "title": "Confirm",
-                "text": "Are you sure you want to set the given value for all the selected features?"
+                "title": "Bekräfta",
+                "text": "Är du säker på att du vill ange det här värdet för alla markerade objekt?"
             },
             "messages": {
-                "cannot_save_all_features": "Cannot save all features"
+                "cannot_save_all_features": "Alla objekten kan inte sparas"
             }
         },
         "VectorLayerPresentation": {
@@ -283,10 +323,10 @@ Oskari.registerLocalization({
                     "sourceAttributes": "Källa: kartlagrets attribut",
                     "sourceCapabilities": "Källa: kartlagrets capabilities",
                     "unknown":"Okänd",
-                    "point": "Punkten",
+                    "point": "Punkt",
                     "line": "Linje",
-                    "area":"Området",
-                    "collection":"All"
+                    "area": "Område",
+                    "collection": "Alla"
                 },
                 "featureFilter": {
                     "title": "Filtrera begärda objekt baserat på attribut",
@@ -308,25 +348,35 @@ Oskari.registerLocalization({
                     "button": "Formatering",
                     "type": {
                         "label": "Typ",
-                        "typeFormats": "Värde typ",
-                        "textFormats": "Textformatering",
+                        "typeFormats": "Typ",
+                        "textFormats": "Visningssätt",
                         "link": "Länk",
                         "image": "Bild",
                         "number": "Nummer",
-                        "phone": "Telefonnummer"
+                        "phone": "Telefonnummer",
+                        "h1": "Rubrik 1",
+                        "h2": "Rubrik 2",
+                        "h3": "Rubrik 3",
+                        "h4": "Rubrik 4",
+                        "h5": "Rubrik 5",
+                        "h6": "Rubrik 6",
+                        "p": "Stycke",
+                        "i": "Kursiv",
+                        "b": "Fetstil",
+                        "em": "Förstärkt"
                     },
                     "options": {
-                        "noLabel": "Visa endast värde",
-                        "skipEmpty": "Skippa tomt värde"
+                        "noLabel": "Visa endast värdet",
+                        "skipEmpty": "Dölj tömma värden"
                     },
                     "params": {
                         "link": "Visa som länk",
-                        "fullUrl": "Visa hela URL",
-                        "label": "Etikett för länk"
+                        "fullUrl": "Visa hela webbadressen",
+                        "label": "Länktext"
                     }
                 },
                 "messages": {
-                    "noFeatureProperties": "Layer doesn't have feature properties information."
+                    "noFeatureProperties": "Datamängden saknar information om objektsegenskaper."
                 }
             }
         }

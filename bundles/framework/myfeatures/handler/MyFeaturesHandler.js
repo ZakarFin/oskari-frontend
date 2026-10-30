@@ -1,7 +1,8 @@
 import { Messaging, StateHandler, controllerMixin } from 'oskari-ui/util';
 import { showLayerForm } from '../view/LayerForm';
 import { BUNDLE_KEY, MAX_SIZE, ERRORS, MY_FEATURES_LAYER_TYPE } from '../constants';
-import { showFeatureEditorFlyout } from '../view/FeatureEditorFlyout/FeatureEditorFlyout';
+import { showFeatureEditorPopup } from '../view/FeatureEditorFlyout/FeatureEditorFlyout';
+import { DESCRIBE_LAYER } from '../../../mapping/mapmodule/domain/constants';
 
 class MyFeaturesHandler extends StateHandler {
     constructor (instance, myFeaturesLayerService) {
@@ -11,6 +12,7 @@ class MyFeaturesHandler extends StateHandler {
         this.sandbox = instance.getSandbox();
         this.setState({
             data: [],
+            selectedLayerIds: this.sandbox.getMap().getLayers().map(layer => layer.getId()),
             loading: false,
             selectedLayerId: null,
             selectedFeatureId: null,
@@ -34,7 +36,9 @@ class MyFeaturesHandler extends StateHandler {
     }
 
     popupCleanup () {
-        if (this.popupControls) this.popupControls.close();
+        if (this.popupControls) {
+            this.popupControls.close();
+        }
         this.popupControls = null;
     }
 
@@ -45,8 +49,12 @@ class MyFeaturesHandler extends StateHandler {
     showLayerDialog (values) {
         const { id, isNew } = values;
         const isImport = !id && !isNew;
+        if (this.featureEditorControls) {
+            // Close feature editor first so the layer form popup can't end up on top of it.
+            this.closeFeatureEditorPopup();
+        }
         if (this.popupControls) {
-            // already opened
+            // already opened -> bring to top.
             if (this.popupControls.id === id) {
                 this.popupControls.bringToTop();
                 return;
@@ -92,14 +100,14 @@ class MyFeaturesHandler extends StateHandler {
         });
 
         if (this.featureEditorControls) {
-            this.closeFeatureEditorFlyout();
+            this.closeFeatureEditorPopup();
         }
 
-        this.featureEditorControls = showFeatureEditorFlyout(layerId, featureId, this?.state?.data, this, null);
-        this.featureEditorControls.bringToTop();
+        this.featureEditorControls = showFeatureEditorPopup(layerId, featureId, this?.state?.data, this, null);
+        this.bringFeatureEditorToTop();
     }
 
-    closeFeatureEditorFlyout () {
+    closeFeatureEditorPopup () {
         if (this.featureEditorControls) {
             this.featureEditorControls.close();
         }
@@ -109,6 +117,12 @@ class MyFeaturesHandler extends StateHandler {
             selectedFeatureId: null,
             savedFeature: null
         });
+    }
+
+    bringFeatureEditorToTop () {
+        if (this.featureEditorControls) {
+            this.featureEditorControls.bringToTop();
+        }
     }
 
     getMaxSize () {
@@ -124,6 +138,18 @@ class MyFeaturesHandler extends StateHandler {
         this.sandbox.request(this.instance, addMlRequest);
     }
 
+    focusLayer (id) {
+        if (!this.sandbox.isLayerAlreadySelected(id)) {
+            this.addLayerToMap(id);
+            return;
+        }
+        this.sandbox.postRequestByName('MapModulePlugin.MapMoveByLayerContentRequest', [id, true]);
+    }
+
+    removeLayerFromMap (id) {
+        this.sandbox.postRequestByName('RemoveMapLayerRequest', [id]);
+    }
+
     refreshLayersList () {
         this.updateState({
             loading: true
@@ -132,6 +158,7 @@ class MyFeaturesHandler extends StateHandler {
             .getAllLayers().filter(layer => layer.isLayerOfType(MY_FEATURES_LAYER_TYPE));
         this.updateState({
             data: layers,
+            selectedLayerIds: this.sandbox.getMap().getLayers().map(layer => layer.getId()),
             loading: false
         });
     }
@@ -202,10 +229,6 @@ class MyFeaturesHandler extends StateHandler {
         });
         try {
             const layerJson = await this.myFeaturesLayerService.getLayerForEdit(id);
-            const attributes = layerJson?.attributes || {};
-            if (!attributes?.data) {
-                attributes.data = {};
-            }
             const values = {
                 id,
                 locale: {
@@ -215,7 +238,7 @@ class MyFeaturesHandler extends StateHandler {
                     ...layerJson?.options?.styles?.default?.featureStyle
                 },
                 layerFields: layerJson?.layerFields,
-                attributes: attributes
+                attributes: layerJson?.attributes
             };
             this.showLayerDialog(values);
         } catch (err) {
@@ -333,7 +356,7 @@ class MyFeaturesHandler extends StateHandler {
             body: JSON.stringify(newMyFeature)
         }).then(response => {
             if (!response.ok) {
-                return Promise.reject(Error('Save failed'));
+                throw Error('Save failed');
             }
             return response.json();
         }).then((savedFeature) => {
@@ -345,7 +368,7 @@ class MyFeaturesHandler extends StateHandler {
             // Elsewhere we always use featureId
             //this.featureEditorControls.update(layerId, null, this, savedFeature);
             setTimeout(() => {
-                this.getSandbox().postRequestByName('MapModulePlugin.MapLayerUpdateRequest', [layerId, true]);
+                this.refreshLayerOnMap(layerId);
                 Messaging.success(this.loc('featureEditor.featureUpdate.success'));
             }, 500);
             return;
@@ -364,19 +387,47 @@ class MyFeaturesHandler extends StateHandler {
             }
         }).then(response => {
             if (!response.ok) {
-                return Promise.reject(Error('Delete failed'));
+                throw Error('Delete failed');
             }
 
             // TODO: should deletefeature maybe return something useful?
             return;
         }).then(() => {
-            this.closeFeatureEditorFlyout();
+            this.closeFeatureEditorPopup();
             setTimeout(() => {
-                this.getSandbox().postRequestByName('MapModulePlugin.MapLayerUpdateRequest', [layerId, true]);
+                this.refreshLayerOnMap(layerId);
                 Messaging.success(this.loc('featureEditor.featureDelete.success'));
             }, 500);
             return;
         }).catch((exception) => Messaging.error(this.loc('featureEditor.featureDelete.error') + exception));
+    }
+
+    layerPropertiesLoaded (layer) {
+        if (!layer) {
+            return false;
+        }
+
+        const hasLoadedProperties = typeof layer.getProperties === 'function' && layer.getProperties().length > 0;
+        const hasLoadedDescribeInfo = typeof layer.getDescribeLayerStatus === 'function' && layer.getDescribeLayerStatus() === DESCRIBE_LAYER.LOADED;
+
+        return hasLoadedProperties || hasLoadedDescribeInfo;
+    }
+
+    async openFeatureData (layerId) {
+        if (!this.sandbox.isLayerAlreadySelected(layerId)) {
+            this.addLayerToMap(layerId);
+        }
+        setTimeout(() => {
+            this.sandbox.postRequestByName('ShowFeatureDataRequest', [layerId]);
+        }, 500);
+    }
+
+    refreshLayerOnMap (layerId) {
+        const mapLayer = this.instance.getMapLayerService().findMapLayer(layerId);
+        if (mapLayer && typeof mapLayer.setDescribeLayerStatus === 'function') {
+            mapLayer.setDescribeLayerStatus(DESCRIBE_LAYER.UNDEFINED);
+        }
+        this.getSandbox().postRequestByName('MapModulePlugin.MapLayerUpdateRequest', [layerId, true]);
     }
 
     cleanProperties(fieldTypes, feature) {
@@ -396,10 +447,21 @@ class MyFeaturesHandler extends StateHandler {
     }
 
     createEventHandlers () {
+        const updateSelectedLayers = event => {
+            const layerId = event.getMapLayer().getId();
+            if (!this.state.data.some(layer => String(layer.getId()) === String(layerId))) {
+                return;
+            }
+            this.updateState({
+                selectedLayerIds: this.sandbox.getMap().getLayers().map(layer => layer.getId())
+            });
+        };
         const handlers = {
+            AfterMapLayerAddEvent: updateSelectedLayers,
+            AfterMapLayerRemoveEvent: updateSelectedLayers,
             MapLayerEvent: (event) => {
                 const operation = event.getOperation();
-                if (operation === 'add' || operation === 'update' || operation === 'remove') {
+                if (['add', 'update', 'remove'].includes(operation)) {
                     this.refreshLayersList();
                 }
             }
@@ -423,10 +485,13 @@ const wrapped = controllerMixin(MyFeaturesHandler, [
     'deleteLayer',
     'exportLayer',
     'addLayerToMap',
+    'focusLayer',
+    'removeLayerFromMap',
     'showLayerDialog',
     'showFeatureEditorDialog',
-    'closeFeatureEditorFlyout',
-    'setFeatureEditorLayer'
+    'closeFeatureEditorPopup',
+    'setFeatureEditorLayer',
+    'openFeatureData'
 ]);
 
 export { wrapped as MyFeaturesHandler };

@@ -26,7 +26,11 @@ Oskari.registerLocalization(
             "LogoPlugin": {
                 "terms": "Terms of Use",
                 "dataSources": "Data Sources",
-                "layersHeader": "Map Layers"
+                "layersHeader": "Map Layers",
+                "unknownSource": "Unknown data source",
+                "layerPrefix": {
+                    "myf": "User provided"
+                }
             },
             "DataSourcePlugin": {
                 "link": "Data source",
@@ -98,7 +102,7 @@ Oskari.registerLocalization(
             },
             "MarkersPlugin": {
                 "title": "Map Marker",
-                "tooltip": "Add map marker",
+                "tooltip": "Map marker",
                 "form": {
                     "style": "Map Marker Style",
                     "message": {
@@ -135,6 +139,7 @@ Oskari.registerLocalization(
             },
             "WfsVectorLayerPlugin": {
                 "editLayer": "Edit map layer",
+                "maybeMoreFeatures": "Layer \"{name}\" may contain more features than were loaded on the map. Zoom in to see all features.",
                 "layerFilter": {
                     "tooltip": "Show only vector layers",
                     "featuredata": "Vector layers"

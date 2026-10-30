@@ -13,6 +13,7 @@ Oskari.registerLocalization({
             import: 'Import',
             yes: 'Yes',
             no: 'No',
+            ok: 'OK',
             next: 'Next',
             previous: 'Previous',
             print: 'Print',
@@ -35,11 +36,60 @@ Oskari.registerLocalization({
         },
         table: {
             sort: {
-                desc: 'Click to sort descending',
-                asc: 'Click to sort ascending',
+                desc: 'Sort descending',
+                asc: 'Sort ascending',
                 cancel: 'Click to cancel sorting'
             },
             emptyText: 'No data.'
+        },
+        DateRange: {
+            dayjs: {
+                name: 'en',
+                weekdays: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+                weekdaysShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                weekdaysMin: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+                months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                monthsShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                weekStart: 0,
+                yearStart: 1,
+                formats: {
+                    LT: 'h:mm A',
+                    LTS: 'h:mm:ss A',
+                    L: 'MM/DD/YYYY',
+                    LL: 'MMMM D, YYYY',
+                    LLL: 'MMMM D, YYYY h:mm A',
+                    LLLL: 'dddd, MMMM D, YYYY h:mm A'
+                }
+            },
+            lang: {
+                locale: 'en_US',
+                placeholder: 'Select date',
+                rangePlaceholder: ['Start date', 'End date'],
+                yearPlaceholder: 'Select year',
+                quarterPlaceholder: 'Select quarter',
+                monthPlaceholder: 'Select month',
+                weekPlaceholder: 'Select week',
+                rangeYearPlaceholder: ['Start year', 'End year'],
+                rangeQuarterPlaceholder: ['Start quarter', 'End quarter'],
+                rangeMonthPlaceholder: ['Start month', 'End month'],
+                rangeWeekPlaceholder: ['Start week', 'End week'],
+                today: 'Today',
+                now: 'Now',
+                ok: 'OK',
+                clear: 'Clear',
+                week: 'Week',
+                monthSelect: 'Choose a month',
+                yearSelect: 'Choose a year',
+                decadeSelect: 'Choose a decade',
+                previousMonth: 'Previous month',
+                nextMonth: 'Next month',
+                previousYear: 'Previous year',
+                nextYear: 'Next year'
+            },
+            timePickerLocale: {
+                placeholder: 'Select time',
+                rangePlaceholder: ['Start time', 'End time']
+            }
         },
         ColorPicker: {
             tooltip: 'Choose color',
@@ -78,13 +128,13 @@ Oskari.registerLocalization({
             stroke: {
                 color: 'Colour',
                 lineCap: 'Endings',
-                lineDash: 'Dash',
+                lineDash: 'Line dash',
                 lineJoin: 'Corners',
                 width: 'Width',
                 area: {
-                    color: 'Colour',
-                    lineDash: 'Dash',
-                    lineJoin: 'Corners',
+                    color: 'Line colour',
+                    lineDash: 'Line dash',
+                    lineJoin: 'Line corners',
                     width: 'Line width'
                 }
             }
@@ -101,7 +151,7 @@ Oskari.registerLocalization({
         },
         LocalizationComponent: {
             otherLanguages: 'Other languages',
-            othersTip: 'Translations will be shown when using the service in different languages',
+            othersTip: 'Translations will be displayed to the user in the language of the user interface.',
             locale: {
                 generic: 'in ({0})',
                 fi: 'in Finnish',
@@ -175,10 +225,10 @@ Oskari.registerLocalization({
                 "problem": "Insufficient metadata for layer!"
             },
             "newTitle": "New feature",
-            "setCurrentLayerTitle": "Select map layer",
+            "editTitle": "Edit feature",
             "geometrylist": {
                 "title": "Geometry",
-                "empty": "Draw a geometry on the map",
+                "empty": "Draw feature on the map",
                 "notRecognized": "Geometry type ({type}) not recognized. Allowing all types to be added. Make sure the interface is ok with this.",
                 "editing": "Draw on the map",
                 "Point": "Point",
@@ -199,24 +249,16 @@ Oskari.registerLocalization({
             "geometryModifyInfo": "With geometry editing tool you can edit feature geometry.",
             "geometryDeleteInfo": "With geometry delete tool you can remove one geometry from feature with multiple geometries.",
             "buttons": {
-                "save": "Save",
-                "cancel": "Cancel",
-                "close": "Close",
-                "ok": "Ok",
                 "delete": "Delete",
                 "addFeature": "Add feature",
-                "editFeature": "Edit feature",
-                "editMultipleFeatures": "Edit multiple features",
                 "deleteFeature": "Delete feature",
-                "yes": "Yes",
-                "no": "No",
             },
             "tools": {
-                "point": "Add point geometry",
-                "line": "Add line geometry",
-                "area": "Add area geometry",
-                "geometryEdit": "Edit geometry on the map",
-                "finishSketch": "Finish drawing on map",
+                "point": "Point",
+                "line": "Line",
+                "area": "Area",
+                "geometryEdit": "Draw feature on the map",
+                "finishSketch": "Finish drawing",
                 "remove": "Remove one geometry"
             },
             "featureUpdate": {
@@ -298,7 +340,7 @@ Oskari.registerLocalization({
                     "button": "Select properties"
                 },
                 "locale": {
-                    "title": "Labels for properties",
+                    "title": "Property names in different languages",
                     "button": "Labeling",
                     "defaultNameProperty": {
                         "en": "Name",
@@ -311,21 +353,31 @@ Oskari.registerLocalization({
                     "button": "Formatting",
                     "type": {
                         "label": "Type",
-                        "typeFormats": "Value type",
-                        "textFormats": "Text formatting",
+                        "typeFormats": "Type",
+                        "textFormats": "Formatting",
                         "link": "Link",
                         "image": "Image",
                         "number": "Number",
-                        "phone": "Phone number"
+                        "phone": "Phone number",
+                        "h1": "Heading 1",
+                        "h2": "Heading 2",
+                        "h3": "Heading 3",
+                        "h4": "Heading 4",
+                        "h5": "Heading 5",
+                        "h6": "Heading 6",
+                        "p": "Paragraph",
+                        "i": "Italic",
+                        "b": "Bold",
+                        "em": "Emphasized"
                     },
                     "options": {
-                        "noLabel": "Show only value",
-                        "skipEmpty": "Skip empty value"
+                        "noLabel": "Show value only",
+                        "skipEmpty": "Hide empty values"
                     },
                     "params": {
                         "link": "Show as link",
-                        "fullUrl": "Show full URL",
-                        "label": "Label for link"
+                        "fullUrl": "Show URL address",
+                        "label": "Text to be shown in the link"
                     }
                 },
                 "messages": {

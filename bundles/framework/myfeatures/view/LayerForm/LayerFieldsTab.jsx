@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Select, Message, TextInput } from 'oskari-ui';
+import { Badge as AntBadge } from 'antd';
 import { Table } from 'oskari-ui/components/Table';
-import { PrimaryButton, DeleteButton } from 'oskari-ui/components/buttons';
-import styled from 'styled-components';
-import { VectorLayerPresentation } from 'oskari-ui/components/VectorLayerPresentation';
+import { PrimaryButton, DeleteButton, IconButton } from 'oskari-ui/components/buttons';
+import { styled } from 'styled-components';
 import { DEFAULT_TYPE } from './LayerFormContent';
+import { setDefaultFilter } from './layerAttributesHelper';
+import { ArrowDownOutlined, ArrowUpOutlined, EditOutlined, EyeInvisibleOutlined, EyeOutlined, SettingOutlined  } from '@ant-design/icons';
+import { ModalContainer } from './ModalContainer';
+import { LocaleProvider } from 'oskari-ui/util';
 
-const types= ['Boolean', 'Integer', 'Double', 'String', 'Date', 'Timestamp', 'UUID'];
+const types = ['String', 'Integer', 'Double', 'Date', 'Timestamp', 'Boolean'];
 
 const options = types.map((typename) => {
     return { value: typename, label: <Message messageKey={`featureEditor.types.${typename}`}/>};
@@ -19,7 +23,13 @@ const StyledSelect = styled(Select)`
 
 const TypeColumn = styled('div')`
     display: flex;
-    justify-content: space-between;
+    align-items: baseline;
+`;
+
+const TypeColumnActions = styled('div')`
+    display: flex-inline;
+    align-items: center;
+    margin-left: auto;
 `;
 
 const AddFieldContainer = styled('div')`
@@ -44,7 +54,42 @@ const Error = styled('div')`
     font-style: italic;
 `;
 
+const Warning = styled('div')`
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0.5em;
+    color: red;
+    font-style: italic;
+`;
+
+const FlexContainer = styled('div')`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5em;
+`;
+
+const Label = styled('span')`
+  display: inline-flex;
+  align-items: center;
+`;
+
+const ColumnActions = styled('div')`
+    display: inline-flex;
+    align-items: center;
+    gap: 1em;
+`;
+
+const StyledBadge = styled(AntBadge)`
+    && .ant-badge-dot {
+        transform: translate(90%, -50%);
+    }
+`;
+
+
 const ENTER_KEY = 'Enter';
+export const MODAL_LOCALE = 'locale';
+export const MODAL_FORMAT = 'format';
 
 const validate = (name, layerFields) => {
     if (!name?.length) {
@@ -77,30 +122,37 @@ const getErrorMessage = (error) => {
     return null;
 };
 
-const getLayer = (layerFields, attributes) => {
-    const layer = {
-        attributes: attributes || {},
-        capabilities: {
-            featureProperties: layerFields?.map(item => item)
-        }
-    };
-
-    return layer;
-};
-
 export const LayerFieldsTab = ({ id = null, layerFields = [], attributes, updateParentState }) => {
     const [name, setName] = useState(null);
     const [type, setType] = useState(DEFAULT_TYPE);
     const [error, setError] = useState(null);
-    const [currentLayer, setCurrentLayer] = useState(getLayer(layerFields, attributes));
+
+    const [modalOpen, setModalOpen] = useState(null);
+    const [editProp, setEditProp] = useState(null);
+
+    const getSelectedProps = () => {
+        const defaultProps = attributes?.data?.filter?.default;
+        return Array.isArray(defaultProps) ? defaultProps : layerFields.map((field) => field.name);
+    };
+
+    const toggleModal = (modalName, fieldName) => {
+        setModalOpen(modalName);
+        setEditProp(fieldName);
+    };
 
     const setLayerFields = () => {
         const newLayerFields = layerFields.concat({ name, type });
+        const newAttributes = setDefaultFilter(attributes, newLayerFields, getSelectedProps().concat(name));
+        newAttributes.data = newAttributes.data || {};
+        newAttributes.data.locale = newAttributes.data.locale || {};
+
         setName(null);
         setType(DEFAULT_TYPE);
         setError(null);
-        updateParentState({ layerFields: newLayerFields });
-        setCurrentLayer(getLayer(newLayerFields, attributes));
+        updateParentState({
+            layerFields: newLayerFields,
+            attributes: newAttributes
+        });
     };
 
     const deleteFromAttributes = (name) => {
@@ -158,10 +210,10 @@ export const LayerFieldsTab = ({ id = null, layerFields = [], attributes, update
         return newAttributes;
 
     };
+
     const deleteField = (name) => {
         const newLayerFields = layerFields.filter(field => field.name !== name);
         const newAttributes = deleteFromAttributes(name);
-        setCurrentLayer(getLayer(newLayerFields, newAttributes));
         updateParentState({
             attributes: newAttributes,
             layerFields: newLayerFields
@@ -169,7 +221,8 @@ export const LayerFieldsTab = ({ id = null, layerFields = [], attributes, update
     };
 
     const setAttributesData = (attribute, value) => {
-        const newAttributes = structuredClone(attributes);
+        const newAttributes = structuredClone(attributes || {});
+        newAttributes.data = newAttributes.data || {};
 
         // delete existing and replace with new value if given
         delete newAttributes.data[attribute];
@@ -179,27 +232,146 @@ export const LayerFieldsTab = ({ id = null, layerFields = [], attributes, update
         updateParentState({ attributes: newAttributes });
     };
 
+    const reorder = (item, index) => {
+        const selectedProps = getSelectedProps();
+        if (selectedProps.length === 0 || index < 0 || index > selectedProps.length - 1) {
+            return;
+        }
+
+        const selectedPropsSorted = selectedProps.filter(name => name !== item.name);
+        selectedPropsSorted.splice(index, 0, item.name);
+
+        syncSelectedPropsWithLayerFields(selectedPropsSorted);
+    };
+
+    function toggleField(name) {
+        const selectedProperties = getSelectedProps();
+        let newList = structuredClone(selectedProperties);
+        if (selectedProperties.includes(name)) {
+            newList = selectedProperties.filter(item => item !== name);
+        } else {
+            newList.push(name);
+        }
+
+        syncSelectedPropsWithLayerFields(newList);
+    }
+
+    const syncSelectedPropsWithLayerFields = (selectedPropsSorted) => {
+        const newAttributes = setDefaultFilter(attributes, layerFields, selectedPropsSorted);
+
+        const newLayerFields = layerFields.sort((a, b) => {
+            const aIndex = selectedPropsSorted.indexOf(a.name);
+            const bIndex = selectedPropsSorted.indexOf(b.name);
+
+            const aMissing = aIndex === -1;
+            const bMissing = bIndex === -1;
+
+            if (aMissing && bMissing) return 0;
+            if (aMissing) return 1;
+            if (bMissing) return -1;
+
+            return aIndex - bIndex;
+        });
+
+        updateParentState({
+            attributes: newAttributes,
+            layerFields: newLayerFields
+        });
+    };
+
     const columnSettings = [
+        {
+            align: 'left',
+            onCell: () => ({
+                style: { verticalAlign: 'middle' }
+            }),
+            render: (text, item, index) => {
+                const selectedProps = getSelectedProps();
+                const fieldIsVisible = selectedProps.indexOf(item?.name) > -1;
+                return <>
+                    { fieldIsVisible &&
+                        <FlexContainer>
+                            <IconButton
+                                title={<Message messageKey={'featureEditor.featureLayer.actions.hideField'}/>}
+                                icon={<EyeOutlined/>}
+                                onClick={() => toggleField(item.name)}
+                            />
+                            <IconButton
+                                title={<Message messageKey={'featureEditor.featureLayer.actions.moveDown'}/>}
+                                icon={<ArrowDownOutlined/>}
+                                onClick={() => reorder(item, index + 1)}
+                            />
+                            <IconButton
+                                title={<Message messageKey={'featureEditor.featureLayer.actions.moveUp'}/>}
+                                icon={<ArrowUpOutlined/> }
+                                onClick={() => reorder(item, index - 1)}
+                            />
+                        </FlexContainer>
+                    }
+                    { !fieldIsVisible &&
+                        <IconButton
+                            title={<Message messageKey={'featureEditor.featureLayer.actions.showField'}/>}
+                            icon={<EyeInvisibleOutlined/>}
+                            onClick={() => toggleField(item.name)}
+                        />
+                    }
+                </>;
+            }
+        },
         {
             align: 'left',
             title: <Message messageKey='featureEditor.featureLayer.fieldName'/>,
             dataIndex: 'name',
-            defaultSortOrder: 'ascend'
+            defaultSortOrder: 'ascend',
+            onCell: () => ({
+                style: { verticalAlign: 'middle' }
+            }),
+            render: (text, item) => {
+                const locale = attributes?.data?.locale?.[Oskari.getLang()];
+                const label = locale && locale[item.name] ? locale[item.name] : text;
+                return <>
+                    <FlexContainer>
+                        <Label>{label}</Label>
+                        <ColumnActions>
+                            <IconButton
+                                title={<Message messageKey='featureEditor.featureLayer.actions.editLocale'/>}
+                                icon={<StyledBadge dot={!!attributes?.data?.locale?.[Oskari.getLang()]?.[item.name]}><EditOutlined/></StyledBadge>}
+                                onClick={() => { modalOpen !== MODAL_LOCALE ? toggleModal(MODAL_LOCALE, item.name) : toggleModal(null, null); }}
+                            />
+                        </ColumnActions>
+                    </FlexContainer>
+                </>;
+            }
         },
         {
             align: 'left',
             title: <Message messageKey='featureEditor.featureLayer.fieldType'/>,
             dataIndex: 'type',
             defaultSortOrder: 'ascend',
+            onCell: () => ({
+                style: { verticalAlign: 'middle' }
+            }),
             render: (text, item) => {
                 return <TypeColumn>
-                    <Message messageKey={`featureEditor.types.${text}`}/>
-                    {!id && <DeleteButton
-                        type='icon'
-                        title={<Message messageKey='tab.confirmDeleteFieldMsg' messageArgs={{ name: item.name }} />}
-                        onConfirm={() => deleteField(item.name)}
-                    />
-                    }
+                    <FlexContainer>
+                        <Label><Message messageKey={`featureEditor.types.${text}`}/></Label>
+                    </FlexContainer>
+                    <TypeColumnActions>
+                        <FlexContainer>
+                            <IconButton
+                                title={<Message messageKey='featureEditor.featureLayer.actions.editFormat'/>}
+                                icon={<StyledBadge dot={!!attributes?.data?.format?.[item.name]}><SettingOutlined/></StyledBadge>}
+                                onClick={() => { modalOpen !== MODAL_FORMAT ? toggleModal(MODAL_FORMAT, item.name) : toggleModal(null, null); }}
+                            />
+                            {!id && <DeleteButton
+                                type='icon'
+                                title={<Message messageKey='tab.confirmDeleteFieldMsg' messageArgs={{ name: item.name }} />}
+                                onConfirm={() => deleteField(item.name)}
+                            />
+                            }
+                        </FlexContainer>
+
+                    </TypeColumnActions>
                 </TypeColumn>;
             }
         }
@@ -212,7 +384,9 @@ export const LayerFieldsTab = ({ id = null, layerFields = [], attributes, update
         };
     });
 
-    return <>
+    const propNames = layerFields.map((field) => field.name);
+    const selectedProps = editProp ? [editProp] : getSelectedProps();
+    return <LocaleProvider value = {{ bundleKey: 'myfeatures' }}>
         <Table
             columns={columnSettings}
             dataSource={rows}
@@ -228,8 +402,8 @@ export const LayerFieldsTab = ({ id = null, layerFields = [], attributes, update
                         setName(e.target.value);
                         setError(validate(e.target.value, layerFields));
                     }}
-                    onKeyUp={(evt) => { if (evt.key === ENTER_KEY) setLayerFields(); }}
-                    />
+                    onKeyUp={(evt) => { if (evt.key === ENTER_KEY && !error) setLayerFields(); }}
+                />
             </AddFieldContainerColumn>
             <AddFieldContainerColumn>
                 <Message messageKey='featureEditor.featureLayer.fieldType'/>
@@ -243,13 +417,27 @@ export const LayerFieldsTab = ({ id = null, layerFields = [], attributes, update
                 <PrimaryButton type='add' onClick={setLayerFields} disabled={!!error || !(name && type)}/>
             </AddFieldContainerColumnFlexBottom>
         </AddFieldContainer>}
+        <AddFieldContainerColumn>
+            <Message messageKey='featureEditor.featureLayer.typeHelp' />
+        </AddFieldContainerColumn>
+        {!id && <Warning><Message messageKey='featureEditor.featureLayer.typeHelpNew' /></Warning>}
         { error && <Error>{getErrorMessage(error)}</Error> }
-        <VectorLayerPresentation layer={currentLayer} updateAttributes={setAttributesData}/>
-    </>;
+
+        <ModalContainer
+            modalOpen={modalOpen}
+            updateAttributes={setAttributesData}
+            locale={attributes?.data?.locale}
+            format={attributes?.data?.format}
+            selectedProperties={selectedProps}
+            propNames={propNames}
+            closeModal={() => { setModalOpen(null); } }
+        />
+    </LocaleProvider>;
 };
 
 LayerFieldsTab.propTypes = {
     id: PropTypes.string,
     layerFields: PropTypes.array,
-    updateLayerFields: PropTypes.func
+    attributes: PropTypes.any,
+    updateParentState: PropTypes.func
 };

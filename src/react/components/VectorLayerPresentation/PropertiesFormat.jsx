@@ -38,7 +38,7 @@ const localize = key => Oskari.getMsg(BUNDLE_NAME, `VectorLayerPresentation.attr
 const getTypeOptions = () => {
     const opts = [];
     opts.push({ label: localize('typeFormats'), options: FORMATTERS.map(f => ({label: localize(f), value: f}))});
-    opts.push({ label: localize('textFormats'), options: TAGS.map(f => ({label: f, value: f}))});
+    opts.push({ label: localize('textFormats'), options: TAGS.map(f => ({label: localize(f), value: f}))});
     return opts;
 };
 
@@ -137,12 +137,14 @@ export const PropertiesFormat = ({ format = {}, properties, selected, labels, up
     });
 
     return (
-        <Fragment>
-            { !allSelected &&
-                <StyledSwitch checked={showAll} onChange={setShowAll} label={<Message messageKey='VectorLayerPresentation.attributes.showAll'/>}/>
-            }
-            <Collapse items={items}/>
-        </Fragment>
+        <LocaleProvider value = {{ bundleKey: 'oskariui' }}>
+            <Fragment>
+                { !allSelected &&
+                    <StyledSwitch checked={showAll} onChange={setShowAll} label={<Message messageKey='VectorLayerPresentation.attributes.showAll'/>}/>
+                }
+                <Collapse items={items}/>
+            </Fragment>
+        </LocaleProvider>
     );
 };
 

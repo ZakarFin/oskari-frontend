@@ -23,18 +23,27 @@ const StyledButton = styled(Button)`
     border-radius: ${props => props.rounding};
     color: ${props => props.$active ? props.hover : props.iconcolor};
     background: ${props => props.bg};
-    box-shadow: 1px 1px 2px rgb(0 0 0 / 60%);
+    box-shadow: 1px 1px 2px rgb(0 0 0 / 60%) !important;
     display: flex;
     align-items: center;
     justify-content: center;
-    &:hover {
+    &&&:hover {
         color: ${props => props.hover} !important;
-        background: ${props => props.bg}  !important;
+        background: ${props => props.bg} !important;
+        border: none !important;
+        border-color: transparent !important;
+        box-shadow: none !important;
     }
-    &:focus,
-    &:active {
+    &&&:focus,
+    &&&:active,
+    &&&:focus-visible {
         color: ${props => props.$active ? props.hover : props.iconcolor} !important;
         background: ${props => props.bg} !important;
+        border: none !important;
+        border-color: transparent !important;
+        box-shadow: none !important;
+        outline: none;
+        box-shadow: 1px 1px 2px rgb(0 0 0 / 60%) !important;
     }
 `;
 const FilledButton = styled(StyledButton)`

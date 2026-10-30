@@ -6,6 +6,7 @@ import { GeneralTab, LayerFieldsTab, VisualizationTab } from './';
 import { SecondaryButton, PrimaryButton, ButtonContainer } from 'oskari-ui/components/buttons';
 import { ERRORS } from '../../constants';
 import { MandatoryIcon } from 'oskari-ui/components/icons';
+import { setDefaultFilter } from './layerAttributesHelper';
 
 const Content = styled.div`
     margin: 12px 24px 24px;
@@ -72,6 +73,14 @@ export const LayerFormContent = ({ values, config, onOk, onCancel, error, addFea
     // TODO: refactor this thing as it's getting way overly complicated
     const { maxSize, unzippedMaxSize, isImport } = config;
     const { style = Oskari.custom.generateBlankStyle(), locale = {} } = values || {};
+    const layerFields = values?.id ? values?.layerFields || [] : getDefaultLayerFields();
+    const initialAttributes = structuredClone(values?.id ? values?.attributes || {} : getDefaultAttributes());
+    initialAttributes.data = initialAttributes.data || {};
+    const storedVisibleFields = initialAttributes.data.filter?.default;
+    const visibleFields = Array.isArray(storedVisibleFields)
+        ? storedVisibleFields
+        : layerFields.map(field => field.name);
+    const attributes = setDefaultFilter(initialAttributes, layerFields, visibleFields);
     const [state, setState] = useState({
         id: values?.id,
         style,
@@ -79,8 +88,8 @@ export const LayerFormContent = ({ values, config, onOk, onCancel, error, addFea
         loading: false,
         tab: 'general',
         file: values?.file,
-        layerFields: values?.id ? values?.layerFields : getDefaultLayerFields(),
-        attributes: values?.id ? values?.attributes : getDefaultAttributes()
+        layerFields,
+        attributes
     });
 
     const showSrs = isImport && error === ERRORS.NO_SRS;

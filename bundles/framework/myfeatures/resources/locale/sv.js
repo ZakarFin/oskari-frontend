@@ -3,23 +3,23 @@ Oskari.registerLocalization(
     "lang": "sv",
     "key": "myfeatures",
     "value": {
-        "title": "Eget dataset",
+        "title": "Egen datamängd",
         "tool": {
-            "tooltip": "Importera ditt eget dataset"
+            "tooltip": "Importera din egen datamängd"
         },
         "flyout": {
-            "title": "Dataset importering",
-            "description": "Importera en datamängd från din dator som en zip-fil, vilken innehåller alla erforderliga filer utav ett av de följande filformatsalternativen:<ul><li>Shapefile (.shp, .shx, .dbf och .prj, frivilligt .cpg)</li><li>GPX (.gpx)</li><li>GeoPackage (.gpkg)</li><li>MapInfo (.mif och .mid)</li><li>Google Maps (.kml)</li></ul>Zip-filen kan innehålla endast en datamängd och dess storlek kan vara högst {maxSize, number} Mb. Enskilda extraherade filer bör vara maximalt {unzippedMaxSize, number} Mb i storlek.",
-            "help": "Importera en datamängd från din dator som ett zip-paket. Var vänlig och kontrollera, att alla filerna är i ett lämpligt filformat och koordinatsystem.",
+            "title": "Datamängd importering",
+            "description": "Importera en datamängd från din dator. GPX (.gpx), KML (.kml), GeoJSON (.json eller .geojson) och GeoPackage (.gpkg) kan laddas upp som enskilda filer. Filformat som kräver flera filer ska laddas upp som en zip-fil som innehåller alla nödvändiga filer i något av följande format:<ul><li>Shapefile (.shp, .shx, .dbf och .prj, frivilligt .cpg)</li><li>GPX (.gpx)</li><li>KML (.kml)</li><li>GeoPackage (.gpkg)</li><li>GeoJSON (.json eller .geojson)</li><li>MapInfo (.mif och .mid)</li></ul>Den uppladdade filen får endast innehålla en datamängd och dess storlek får vara högst {maxSize, number} Mb. Enskilda filer som extraheras från zip-arkiv får vara högst {unzippedMaxSize, number} Mb stora.",
+            "help": "Importera en datamängd från din dator. GPX-, KML-, GeoJSON- och GeoPackage-filer kan laddas upp som enskilda filer. För filformat som kräver flera filer ska du kontrollera att alla nödvändiga filer finns i zip-paketet och att data har rätt filformat och koordinatsystem.",
             "submit": "Skicka",
-            "success": "Dataset importerade med {count, plural, one {# objekt} other {# objekt}}. Du kan hitta kartlagret i menyn \"Mina uppgifter\".",
+            "success": "Datamängd importerade med {count, plural, one {# objekt} other {# objekt}}. Du kan hitta datamängden i menyn \"Mina uppgifter\".",
             "tabs": {
-                "general" : "Allmän",
+                "general" : "Basuppgifter",
                 "visualization": "Visualisering",
-                "layerFields": "Layer fields"
+                "layerFields": "Attribut"
             },
             "layer": {
-                "name": "Namnge kartlagret",
+                "name": "Datamängdens namn",
                 "desc": "Beskrivning",
                 "source": "Datakälla",
                 "srs": "EPSG-kod"
@@ -28,7 +28,7 @@ Oskari.registerLocalization(
                 "name": "Namnet på kartlagret saknas",
                 "file": "Filen har inte valts",
                 "epsg": "EPSG code has to be number",
-                "layerFields": "At least one attribute field is required for layer"
+                "layerFields": "Minst ett attributfält krävs för datamängden"
             },
             "error":{
                 "title": "Importerningen av datamängden misslyckades.",
@@ -58,10 +58,13 @@ Oskari.registerLocalization(
             }
         },
         "tab": {
-            "title": "Dataset (Beta)",
-            "editLayer": "Redigera kartlagret",
-            "deleteLayer": "Ta bort kartlagret",
+            "title": "Datamängder",
+            "editLayer": "Redigera datamängden",
+            "deleteLayer": "Ta bort datamängden",
             "grid": {
+                "removeFromMap": "Ta bort från kartan",
+                "focusLayer": "Centrera på objekten",
+                "addAndFocusLayer": "Lägg till på kartan och centrera på objekten",
                 "name": "Namn",
                 "desc": "Beskrivning",
                 "source": "Datakälla",
@@ -71,10 +74,11 @@ Oskari.registerLocalization(
                 "removeButton": "Ta bort",
                 "actions": "Handlingar",
                 "createDate": "Skapad",
-                "contentEditor": "Sisältöeditori"
+                "contentEditor": "Redigera",
+                "featuredata": "Öppna objektuppgifterna"
             },
             "confirmDeleteMsg": "Vill du ta bort \"{name}\"?",
-            "downloadTooltip": "Download dataset",
+            "downloadTooltip": "Ladda ner datamängden till din dator i GeoJSON format.",
             "confirmDeleteFieldMsg": "Vill du ta bort \"{name}\"?",
             "buttons": {
                 "ok": "OK",
@@ -84,64 +88,84 @@ Oskari.registerLocalization(
                 "close": "Stäng"
             },
             "notification": {
-                "deletedTitle": "Ta bort dataset",
-                "deletedMsg": "Datasetet har tagits bort",
-                "editedMsg": "Datasetet har uppdaterats",
+                "deletedTitle": "Ta bort datamängd",
+                "deletedMsg": "Datamängden har tagits bort",
+                "editedMsg": "Datamängden har uppdaterats",
                 "createdMsg": "The dataset has been created"
             },
             "error": {
                 "title": "Fel!",
                 "generic": "Systemfel. Försök på nytt senare.",
                 "deleteMsg": "Systemfel. Försök på nytt senare.",
-                "editMsg": "Uppdateringen av datasetet misslyckades på grund av ett fel i systemet. Försök på nytt senare.",
-                "createMsg": "Creating the dataset failed due to an error in the system. Please try again later.",
-                "getStyle": "Sökningen av den stil som definierats för datasetet misslyckades. På blanketten visas utgångsvärdena. Byt värdena för stilen som definierats för datasetet innan du lagrar ändringarna.",
-                "styleName": "Namnge kartlagret och försök sedan på nytt."
+                "editMsg": "Datamängden uppdaterats inte på grund av fel i systemet. Försök på nytt senare.",
+                "createMsg": "Datamängden skapats inte på grund av fel i systemet. Försök på nytt senare.",
+                "getStyle": "Sökningen av den stil som definierats för datamängden misslyckades. På blanketten visas utgångsvärdena. Byt värdena för stilen som definierats för datasetet innan du lagrar ändringarna.",
+                "styleName": "Namnge datamängd och försök sedan på nytt."
             }
         },
         "featureEditor": {
-            "title": "Feature editor",
-            "addFeatureTool": "Add feature",
-            "deleteFeatureTool": "Delete feature",
-            "confirmDelete": "Do you want to delete the feature?",
+            "title": "Information om ett enskilt objekt",
+            "titleNew": "Lägg till nytt objekt",
+            "addFeatureTool": "Lägg till objekt",
+            "deleteFeatureTool": "Ta bort objekt",
+            "featureToolTooltip": "Redigera objekt",
+            "confirmDelete": "Vill du ta bort objektet?",
             "featureUpdate": {
-                "success": "Feature properties updated successfully",
-                "error": "Error occured during feature properties update"
+                "success": "Objektuppgifter har uppdaterats",
+                "error": "Det gick inte att uppdatera objektuppgiferna"
             },
             "featureDelete": {
-                "success": "Feature deleted successfully",
-                "error": "Error occured during feature delete"
+                "success": "Objektet har tagits bort",
+                "error": "Det gick inte att ta bort objektet"
             },
             "featureLayer": {
-                "new": "New feature layer",
-                "addFeature": "Add feature",
-                "fieldName": "Name",
-                "fieldType": "Type",
+                "new": "Ny datamängd",
+                "addFeature": "Lägg till objekt",
+                "fieldName": "Namn",
+                "fieldType": "Typ",
+                "typeHelp": "Typen påverkar hur attribut visas i användargränssnittet.",
+                "typeHelpNew": "Du kan lägga till attribut endast innan du har sparat datamängden.",
+                "tableInfoText": "Öppna datamängden genom att klicka på datamängdens namn. Du ser information om ett enskilt objekt genom att klicka på objektet på kartan.",
                 "errors": {
-                    "fieldAlreadyExists": "Field already exists",
-                    "isValidJSONKey": "Illegal characters."
+                    "fieldAlreadyExists": "Attributen finns redan",
+                    "isValidJSONKey": "Attributen innehåller ogiltiga tecken"
+                },
+                "actions": {
+                    "hideField": "Dölj för användaren",
+                    "showField": "Visa för användaren",
+                    "moveUp": "Flytta upp",
+                    "moveDown": "Flytta ned",
+                    "editLocale": "Redigera attributnamn på olika språk.",
+                    "editFormat": "Välj attributtyp och hur informationen ska visas i  användargränssnittet.",
+                },
+                "modal": {
+                    "locale": {
+                        "title": "Attributnamn på olika språk"
+                    },
+                    "format": {
+                        "title": "Visningssätt för attributvärde"
+                    }
                 }
             },
             "types": {
-                "String": "String",
-                "Boolean": "Boolean",
-                "Integer": "Integer",
-                "Double": "Double",
-                "Date": "Date",
-                "Timestamp": "Timestamp",
-                "UUID": "UUID"
+                "String": "Text",
+                "Integer": "Heltal",
+                "Double": "Decimaltal",
+                "Date": "Datum",
+                "Timestamp": "Datum och tid",
+                "Boolean": "Boolean"
             },
             "layerSelectionPanel": {
-                "setCurrentLayerTitle": "Select dataset",
+                "setCurrentLayerTitle": "Välj en datamängd eller lägg till en ny datamängd",
                 "buttons": {
-                    "setCurrentLayer": "Select dataset",
-                    "addNewLayer": "New dataset"
+                    "setCurrentLayer": "Välj datamängd",
+                    "addNewLayer": "Ny datamängd"
                 }
             }
         },
         "layer": {
-            "organization": "Egna dataset",
-            "group": "Egna dataset"
+            "organization": "Egna datamängder",
+            "group": "Egna datamängder"
         }
     }
 });

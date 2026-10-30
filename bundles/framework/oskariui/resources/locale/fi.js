@@ -13,6 +13,7 @@ Oskari.registerLocalization({
             import: 'Tuo',
             yes: 'Kyllä',
             no: 'Ei',
+            ok: 'OK',
             next: 'Seuraava',
             previous: 'Edellinen',
             print: 'Tulosta',
@@ -40,6 +41,55 @@ Oskari.registerLocalization({
                 cancel: 'Peruuta lajittelu'
             },
             emptyText: 'Ei tietoja.'
+        },
+        DateRange: {
+            dayjs: {
+                name: 'fi',
+                weekdays: ['sunnuntai', 'maanantai', 'tiistai', 'keskiviikko', 'torstai', 'perjantai', 'lauantai'],
+                weekdaysShort: ['su', 'ma', 'ti', 'ke', 'to', 'pe', 'la'],
+                weekdaysMin: ['su', 'ma', 'ti', 'ke', 'to', 'pe', 'la'],
+                months: ['tammikuu', 'helmikuu', 'maaliskuu', 'huhtikuu', 'toukokuu', 'kesäkuu', 'heinäkuu', 'elokuu', 'syyskuu', 'lokakuu', 'marraskuu', 'joulukuu'],
+                monthsShort: ['tammi', 'helmi', 'maalis', 'huhti', 'touko', 'kesä', 'heinä', 'elo', 'syys', 'loka', 'marras', 'joulu'],
+                weekStart: 1,
+                yearStart: 4,
+                formats: {
+                    LT: 'HH.mm',
+                    LTS: 'HH.mm.ss',
+                    L: 'DD.MM.YYYY',
+                    LL: 'D. MMMM[ta] YYYY',
+                    LLL: 'D. MMMM[ta] YYYY, [klo] HH.mm',
+                    LLLL: 'dddd, D. MMMM[ta] YYYY, [klo] HH.mm'
+                }
+            },
+            lang: {
+                locale: 'fi_FI',
+                placeholder: 'Valitse päivä',
+                rangePlaceholder: ['Alkamispäivä', 'Päättymispäivä'],
+                yearPlaceholder: 'Valitse vuosi',
+                quarterPlaceholder: 'Valitse vuosineljännes',
+                monthPlaceholder: 'Valitse kuukausi',
+                weekPlaceholder: 'Valitse viikko',
+                rangeYearPlaceholder: ['Alkuvuosi', 'Loppuvuosi'],
+                rangeQuarterPlaceholder: ['Alkuvuosineljännes', 'Loppuvuosineljännes'],
+                rangeMonthPlaceholder: ['Alkukuukausi', 'Loppukuukausi'],
+                rangeWeekPlaceholder: ['Alkuviikko', 'Loppuviikko'],
+                today: 'Tänään',
+                now: 'Nyt',
+                ok: 'OK',
+                clear: 'Tyhjennä',
+                week: 'Viikko',
+                monthSelect: 'Valitse kuukausi',
+                yearSelect: 'Valitse vuosi',
+                decadeSelect: 'Valitse vuosikymmen',
+                previousMonth: 'Edellinen kuukausi',
+                nextMonth: 'Seuraava kuukausi',
+                previousYear: 'Edellinen vuosi',
+                nextYear: 'Seuraava vuosi'
+            },
+            timePickerLocale: {
+                placeholder: 'Valitse aika',
+                rangePlaceholder: ['Alkuaika', 'Loppuaika']
+            }
         },
         ColorPicker: {
             tooltip: 'Valitse väri',
@@ -82,10 +132,10 @@ Oskari.registerLocalization({
                 lineJoin: 'Kulmat',
                 width: 'Leveys',
                 area: {
-                    color: 'Väri',
-                    lineDash: 'Tyyli',
+                    color: 'Reunaviivan väri',
+                    lineDash: 'Reunaviivan tyyli',
                     lineJoin: 'Kulmat',
-                    width: 'Viivan paksuus'
+                    width: 'Reunaviivan leveys'
                 }
             }
         },
@@ -101,7 +151,7 @@ Oskari.registerLocalization({
         },
         LocalizationComponent: {
             otherLanguages: 'Muut kielet',
-            othersTip: 'Käännökset näytetään käytettäessä palvelua eri kielillä',
+            othersTip: 'Käännökset näytetään käyttöliittymässä käytössä olevalla kielellä.',
             locale: {
                 generic: 'kielellä ({0})',
                 fi: 'suomeksi',
@@ -175,10 +225,10 @@ Oskari.registerLocalization({
                 "problem": "Tason tiedot puuttuvat!"
             },
             "newTitle": "Uusi kohde",
-            "setCurrentLayerTitle": "Valitse karttataso",
+            "editTitle": "Muokkaa kohdetta",
             "geometrylist": {
                 "title": "Geometria",
-                "empty": "Merkitse geometria kartalle",
+                "empty": "Piirrä kohde kartalle",
                 "notRecognized": "Geometrian tyyppiä ({type}) ei tunnistettu. Kaikki piirtomuodot sallitaan, mutta varmista rajapinnan tukevan näitä ennen tallennusta.",
                 "editing": "Tee merkintä kartalle",
                 "Point": "Piste",
@@ -198,24 +248,16 @@ Oskari.registerLocalization({
             "geometryModifyInfo": "Geometrian muokkautyökalulla voit muokata kohteen geometriaa.",
             "geometryDeleteInfo": "Geometrian poistotyökalulla voit poistaa yhden geometrian monipalstaisesta kohteesta.",
             "buttons": {
-                "save": "Tallenna",
-                "cancel": "Peruuta",
-                "close": "Sulje",
-                "ok": "Ok",
                 "delete": "Poista",
                 "addFeature": "Lisää kohde",
-                "editFeature": "Muokkaa kohdetta",
-                "editMultipleFeatures": "Muokkaa useita kohteita",
                 "deleteFeature": "Poista kohde",
-                "yes": "Kyllä",
-                "no": "Ei",
             },
             "tools": {
-                "point": "Lisää piste",
-                "line": "Lisää viiva",
-                "area": "Lisää alue",
+                "point": "Piste",
+                "line": "Viiva",
+                "area": "Alue",
                 "geometryEdit": "Muokkaa kartalla",
-                "finishSketch": "Lukitse karttamerkintä",
+                "finishSketch": "Lopeta piirtäminen",
                 "remove": "Poista yksittäinen geometria"
             },
             "featureUpdate": {
@@ -305,21 +347,31 @@ Oskari.registerLocalization({
                     "button": "Muotoilu",
                     "type": {
                         "label": "Tyyppi",
-                        "typeFormats": "Arvon tyyppi",
-                        "textFormats": "Tekstin muotoilu",
+                        "typeFormats": "Tyyppi",
+                        "textFormats": "Muotoilu",
                         "link": "Linkki",
                         "image": "Kuva",
                         "number": "Numero",
-                        "phone": "Puhelinnumero"
+                        "phone": "Puhelinnumero",
+                        "h1": "Otsikko 1",
+                        "h2": "Otsikko 2",
+                        "h3": "Otsikko 3",
+                        "h4": "Otsikko 4",
+                        "h5": "Otsikko 5",
+                        "h6": "Otsikko 6",
+                        "p": "Kappale",
+                        "i": "Kursivoitu",
+                        "b": "Lihavoitu",
+                        "em": "Korostettu"
                     },
                     "options": {
                         "noLabel": "Näytä vain arvo",
-                        "skipEmpty": "Älä näytä tyhjää"
+                        "skipEmpty": "Piilota tyhjät arvot"
                     },
                     "params": {
                         "link": "Näytä linkkinä",
-                        "fullUrl": "Näytä koko osoite",
-                        "label": "Linkin label"
+                        "fullUrl": "Näytä verkko-osoite",
+                        "label": "Linkissä näytettävä teksti"
                     }
                 },
                 "messages": {

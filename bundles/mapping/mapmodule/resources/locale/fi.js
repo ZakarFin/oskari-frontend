@@ -26,7 +26,11 @@ Oskari.registerLocalization(
             "LogoPlugin": {
                 "terms": "Käyttöehdot",
                 "dataSources": "Tietolähteet",
-                "layersHeader": "Karttatasot"
+                "layersHeader": "Karttatasot",
+                "unknownSource": "Tietolähde ei tiedossa",
+                "layerPrefix": {
+                    "myf": "Käyttäjän syöttämä"
+                }
             },
             "DataSourcePlugin": {
                 "link": "Tietolähde",
@@ -98,7 +102,7 @@ Oskari.registerLocalization(
             },
             "MarkersPlugin": {
                 "title": "Karttamerkintä",
-                "tooltip": "Tee karttamerkintä",
+                "tooltip": "Karttamerkintä",
                 "form": {
                     "style": "Karttamerkinnän esitystapa",
                     "message": {
@@ -135,6 +139,7 @@ Oskari.registerLocalization(
             },
             "WfsVectorLayerPlugin": {
                 "editLayer": "Muokkaa tasoa",
+                "maybeMoreFeatures": "Tasolla \"{name}\" saattaa olla enemmän kohteita kuin kartalle ladattiin. Lähennä karttaa nähdäksesi kaikki kohteet.",
                 "layerFilter": {
                     "tooltip": "Näytä vain vektoritasot",
                     "featuredata": "Vektoritasot"
